@@ -11,6 +11,14 @@ Furthermore, generator style async io is much more fun than callback style.
 
 April 23rd, 2017, Sunday, I woke up and felt bored and decided to make one of my own. Since I had little prior web knowledge, this would be a super fun project for me.
 
+# Dependency
+Python3.5+  
+Future version might only support Python3.6+ since `curio` might only support 3.6+ in the future.
+```
+pip install h2
+pip install curio
+```
+
 # How to
 Create a dir `public` or whatever names, put your frontend code there.
 

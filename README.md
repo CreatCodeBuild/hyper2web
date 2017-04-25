@@ -20,7 +20,9 @@ pip install curio
 ```
 
 # How to
-Create a dir `public` or whatever names, put your frontend code there.
+First clone this repo to your disk.
+
+Under this repo, create a dir `public` or whatever names, put your frontend code there.
 
 Then create an `app.py` or whatever names.
 ```

@@ -1,5 +1,6 @@
 from h2web import app
 
+
 if __name__ == '__main__':
 
 	# A basic callback style API is provided
@@ -10,3 +11,4 @@ if __name__ == '__main__':
 	app = app.App(static_file_handle='auto', root_route='index.html')
 	app.get('name', get_name)
 	app.up()
+	print(__package__)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.5
 # -*- coding: utf-8 -*-
 """
-curio_server.py
+server.py
 ~~~~~~~~~~~~~~~
 
 A fully-functional HTTP/2 server written for curio.
@@ -51,6 +51,50 @@ class EndPointHandler:
         # Body
         self.connection.send_data(self.stream_id, bytes(data), end_stream=True)
         await self.socket.sendall(self.connection.data_to_send())
+
+    async def send_file(self, file_path, stream_id):
+        """
+        Send a file, obeying the rules of HTTP/2 flow control.
+        """
+        filesize = os.stat(file_path).st_size
+        content_type, content_encoding = mimetypes.guess_type(file_path)
+        response_headers = [
+            (':status', '200'),
+            ('content-length', str(filesize)),
+            ('server', 'curio-h2'),
+        ]
+        if content_type:
+            response_headers.append(('content-type', content_type))
+        if content_encoding:
+            response_headers.append(('content-encoding', content_encoding))
+
+        self.conn.send_headers(stream_id, response_headers)
+        await self.sock.sendall(self.conn.data_to_send())
+
+        with open(file_path, 'rb', buffering=0) as f:
+            await self._send_file_data(f, stream_id)
+
+    async def _send_file_data(self, fileobj, stream_id):
+        """
+        Send the data portion of a file. Handles flow control rules.
+        """
+        while True:
+            while not self.conn.local_flow_control_window(stream_id):
+                await self.wait_for_flow_control(stream_id)
+
+            chunk_size = min(
+                self.conn.local_flow_control_window(stream_id),
+                READ_CHUNK_SIZE,
+            )
+
+            data = fileobj.read(chunk_size)
+            keep_reading = (len(data) == chunk_size)
+
+            self.conn.send_data(stream_id, data, not keep_reading)
+            await self.sock.sendall(self.conn.data_to_send())
+
+            if not keep_reading:
+                break
 
 
 def create_listening_ssl_socket(address, certfile, keyfile):
@@ -165,53 +209,16 @@ class H2Server:
                 else:
                     await self.send_file(full_path, stream_id)
 
-        else:
+        elif headers[':method'] == 'POST':
             raise NotImplementedError('Only GET is implemented')
 
+        elif headers[':method'] == 'PUT':
+            raise NotImplementedError('PUT is not implemented yet')
+        elif headers[':method'] == 'DELETE':
+            raise NotImplementedError('DELETE is not implemented yet')
+        else:
+            raise NotImplementedError(headers[':method']+' is not implemented')
 
-    async def send_file(self, file_path, stream_id):
-        """
-        Send a file, obeying the rules of HTTP/2 flow control.
-        """
-        filesize = os.stat(file_path).st_size
-        content_type, content_encoding = mimetypes.guess_type(file_path)
-        response_headers = [
-            (':status', '200'),
-            ('content-length', str(filesize)),
-            ('server', 'curio-h2'),
-        ]
-        if content_type:
-            response_headers.append(('content-type', content_type))
-        if content_encoding:
-            response_headers.append(('content-encoding', content_encoding))
-
-        self.conn.send_headers(stream_id, response_headers)
-        await self.sock.sendall(self.conn.data_to_send())
-
-        with open(file_path, 'rb', buffering=0) as f:
-            await self._send_file_data(f, stream_id)
-
-    async def _send_file_data(self, fileobj, stream_id):
-        """
-        Send the data portion of a file. Handles flow control rules.
-        """
-        while True:
-            while not self.conn.local_flow_control_window(stream_id):
-                await self.wait_for_flow_control(stream_id)
-
-            chunk_size = min(
-                self.conn.local_flow_control_window(stream_id),
-                READ_CHUNK_SIZE,
-            )
-
-            data = fileobj.read(chunk_size)
-            keep_reading = (len(data) == chunk_size)
-
-            self.conn.send_data(stream_id, data, not keep_reading)
-            await self.sock.sendall(self.conn.data_to_send())
-
-            if not keep_reading:
-                break
 
     async def wait_for_flow_control(self, stream_id):
         """

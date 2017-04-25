@@ -14,7 +14,7 @@ April 23rd, 2017, Sunday, I woke up and felt bored and decided to make one of my
 # Dependency
 Python3.5+  
 Future version might only support Python3.6+ since `curio` might only support 3.6+ in the future.
-```
+```bash
 pip install h2
 pip install curio
 ```
@@ -25,7 +25,7 @@ First clone this repo to your disk.
 Under this repo, create a dir `public` or whatever names, put your frontend code there.
 
 Then create an `app.py` or whatever names.
-```
+```python
 # app.py
 from h2web import app
 
@@ -41,6 +41,36 @@ if __name__ == '__main__':
 	app.up()
 ```
 Then run this script
-```
+```bash
 python app.py
+```
+
+# Todo list:
+### 1. Several Flavors of router API
+Callback Style, which is inspired by ExpressJS (Partially Implemented)
+```python
+async def end_point_function(handler: EndPointHandler):
+	# do something
+	...
+	# send_and_end will send data and end this HTTP2 stream
+	await handler.send_and_end('some data')
+
+app.get('rest_api_path', end_point_function)
+```
+Decorator Style, which is inspired to Flask
+```python
+@app.get('rest_api_path')
+async def end_point_function(handler: EndPointHandler):
+	# do something
+	...
+	# send_and_end will send data and end this HTTP2 stream
+	await handler.send_and_end('some data')
+```
+Context Manager Style, which I don't even know if it is possible. I don't know how to implement it but sounds like a cool idea
+```
+async with app.get('rest_api_path') as handler:
+	# do something
+	...
+	# send_and_end will send data and end this HTTP2 stream
+	await handler.send_and_end('some data')
 ```

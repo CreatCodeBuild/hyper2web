@@ -46,7 +46,22 @@ python app.py
 ```
 
 # Todo list:
-### 1. Several Flavors of router API
+### 1. More Complete GET support
+Pattern match of routes with regular expression.
+```
+app.get('user/+', func)
+```
+This matches `user/xxx` but not `user/`
+
+Nested Routes
+```
+app.get('department/+/employee/+', func)
+```
+
+### 2. Support POST
+As the title suggests.
+
+### 3. Several Flavors of router API
 #### Callback Style, which is inspired by ExpressJS (Partially Implemented)
 ```python
 async def end_point_function(handler: EndPointHandler):
@@ -74,3 +89,9 @@ async with app.get('rest_api_path') as handler:
 	# send_and_end will send data and end this HTTP2 stream
 	await handler.send_and_end('some data')
 ```
+
+### 4. Security
+I have zero knowledge.
+
+### Syncronizing API
+Maybe it's a bad idea.

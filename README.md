@@ -9,6 +9,10 @@ pip install h2
 pip install curio
 ```
 
+This project is at its very early stage. I still need to learn a lot about h2, curio, HTTP and Web.  
+[h2 Github](https://github.com/python-hyper/hyper-h2) [doc](https://python-hyper.org/h2/en/stable/)  
+[curio Github](https://github.com/dabeaz/curio) [doc](https://curio.readthedocs.io/en/latest/)
+
 # How to
 First clone this repo to your disk.
 

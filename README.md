@@ -47,7 +47,7 @@ python app.py
 
 # Todo list:
 ### 1. Several Flavors of router API
-Callback Style, which is inspired by ExpressJS (Partially Implemented)
+#### Callback Style, which is inspired by ExpressJS (Partially Implemented)
 ```python
 async def end_point_function(handler: EndPointHandler):
 	# do something
@@ -57,7 +57,7 @@ async def end_point_function(handler: EndPointHandler):
 
 app.get('rest_api_path', end_point_function)
 ```
-Decorator Style, which is inspired to Flask
+#### Decorator Style, which is inspired to Flask
 ```python
 @app.get('rest_api_path')
 async def end_point_function(handler: EndPointHandler):
@@ -66,7 +66,7 @@ async def end_point_function(handler: EndPointHandler):
 	# send_and_end will send data and end this HTTP2 stream
 	await handler.send_and_end('some data')
 ```
-Context Manager Style, which I don't even know if it is possible. I don't know how to implement it but sounds like a cool idea
+#### Context Manager Style, which I don't even know if it is possible. I don't know how to implement it but sounds like a cool idea
 ```
 async with app.get('rest_api_path') as handler:
 	# do something

@@ -93,5 +93,5 @@ async with app.get('rest_api_path') as handler:
 ### 4. Security
 I have zero knowledge.
 
-### Syncronizing API
+### 5. Syncronizing API
 Maybe it's a bad idea.

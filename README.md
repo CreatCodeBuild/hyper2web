@@ -82,7 +82,7 @@ async def end_point_function(handler: EndPointHandler):
 	await handler.send_and_end('some data')
 ```
 #### Context Manager Style, which I don't even know if it is possible. I don't know how to implement it but sounds like a cool idea
-```
+```python
 async with app.get('rest_api_path') as handler:
 	# do something
 	...

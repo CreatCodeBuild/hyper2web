@@ -57,7 +57,7 @@ async def end_point_function(handler: EndPointHandler):
 
 app.get('rest_api_path', end_point_function)
 ```
-#### Decorator Style, which is inspired to Flask
+#### Decorator Style, which is inspired by Flask
 ```python
 @app.get('rest_api_path')
 async def end_point_function(handler: EndPointHandler):

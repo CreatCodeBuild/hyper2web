@@ -38,3 +38,7 @@ if __name__ == '__main__':
 	app.get('name', get_name)
 	app.up()
 ```
+Then run this script
+```
+python app.py
+```

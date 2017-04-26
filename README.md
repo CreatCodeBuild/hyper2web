@@ -21,7 +21,7 @@ Under this repo, create a dir `public` or whatever names, put your frontend code
 Then create an `app.py` or whatever names.
 ```python
 # app.py
-from h2web import app
+from hyper2web import app
 
 if __name__ == '__main__':
 

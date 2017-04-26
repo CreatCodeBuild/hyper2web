@@ -44,7 +44,7 @@ Then run this script
 python app.py
 ```
 That's it! If you just want to serve static files, it's just 2 lines!
-```
+```python
 from hyper2web import app
 app.App(port=5000).up()
 ```

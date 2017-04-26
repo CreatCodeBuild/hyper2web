@@ -34,10 +34,7 @@ class EndPointHandler:
 		assume only POST stream will call this one
 		concat all data chunks in this handler to one bytes object
 		"""
-		print('z1')
-		print(len(self.buffered_data), self.buffered_data)
 		self.data = b''.join(self.buffered_data)
-		print('z2')
 		self.buffered_data = None
 
 	"""async functions"""

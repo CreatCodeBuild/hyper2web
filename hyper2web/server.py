@@ -119,20 +119,13 @@ class H2Server:
             endpoint.active_end_points[event.stream_id] = EndPointHandler(self, self.sock, self.conn, event.stream_id)
 
         # update this handler
-        print('xxx')
         endpoint.active_end_points[event.stream_id].update(event)
-        print('xxx2')
         # possibly finalize this handler
         if event.stream_ended:
-            print('xxx3')
-            print(event.stream_id in endpoint.active_end_points)
             endpoint.active_end_points[event.stream_id].finalize()
-            print('xxx4')
             await self.app.handle_route(endpoint.active_end_points[event.stream_id])
-            print('xxx5')
             del endpoint.active_end_points[event.stream_id]
-            print('xxx6')
-        print('xxx7')
+
     # todo: should not directly call handle_route in this function
     # todo: since a handler may not be finalized
     async def request_received(self, event: h2.events.RequestReceived):
@@ -147,7 +140,6 @@ class H2Server:
 
         if headers[':method'] == 'GET':
             # it's fine to call handle_route for GET since header is the only thing needed
-            print('1')
             await self.app.handle_route(endpoint_handler)
 
         elif headers[':method'] == 'POST':

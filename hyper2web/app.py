@@ -38,19 +38,9 @@ class App:
 		self.register_route('POST', route, handler)
 
 	async def handle_route(self, endpoint):
-		print('rr')
-		print(self.routes)
-		# print(endpoint)
-		# print(vars(endpoint))
-		print(endpoint.route)
-		print(endpoint.route in self.routes['GET'])
-		print(endpoint.route in self.routes['POST'])
 		if endpoint.route in self.routes['GET'] or endpoint.route in self.routes['POST']:
-			print('h1')
 			await self.routes[endpoint.header[':method']][endpoint.route](endpoint)
-			print('h2')
 		else:
-			print('h3')
 			# if route is not registered, assume it is requesting files
 			full_path = os.path.join(self.root, endpoint.route)
 			if os.path.exists(full_path):

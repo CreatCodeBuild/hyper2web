@@ -1,4 +1,4 @@
-from h2web import app
+from hyper2web import app
 
 
 if __name__ == '__main__':

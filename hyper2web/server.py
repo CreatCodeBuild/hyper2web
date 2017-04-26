@@ -8,7 +8,6 @@ A fully-functional HTTP/2 server written for curio.
 
 Requires Python 3.5+.
 """
-import mimetypes
 import os
 import sys
 
@@ -20,81 +19,9 @@ import h2.events
 
 
 # The maximum amount of a file we'll send in a single DATA frame.
+from hyper2web.endpoint import EndPointHandler
+
 READ_CHUNK_SIZE = 8192
-
-
-class EndPointHandler:
-    def __init__(self, sock, connection: h2.connection.H2Connection, header, stream_id):
-        self.socket = sock
-        self.connection = connection
-        self.header = header
-        self.stream_id = stream_id
-
-    async def send_and_end(self, data):
-
-        # Header
-        content_type, content_encoding = mimetypes.guess_type(data)
-        data = bytes(data, encoding='utf8')
-        response_headers = [
-            (':status', '200'),
-            ('content-length', str(len(data))),
-            ('server', 'curio-h2'),
-        ]
-        if content_type:
-            response_headers.append(('content-type', content_type))
-        if content_encoding:
-            response_headers.append(('content-encoding', content_encoding))
-
-        self.connection.send_headers(self.stream_id, response_headers)
-        await self.socket.sendall(self.connection.data_to_send())
-
-        # Body
-        self.connection.send_data(self.stream_id, bytes(data), end_stream=True)
-        await self.socket.sendall(self.connection.data_to_send())
-
-    async def send_file(self, file_path, stream_id):
-        """
-        Send a file, obeying the rules of HTTP/2 flow control.
-        """
-        filesize = os.stat(file_path).st_size
-        content_type, content_encoding = mimetypes.guess_type(file_path)
-        response_headers = [
-            (':status', '200'),
-            ('content-length', str(filesize)),
-            ('server', 'curio-h2'),
-        ]
-        if content_type:
-            response_headers.append(('content-type', content_type))
-        if content_encoding:
-            response_headers.append(('content-encoding', content_encoding))
-
-        self.conn.send_headers(stream_id, response_headers)
-        await self.sock.sendall(self.conn.data_to_send())
-
-        with open(file_path, 'rb', buffering=0) as f:
-            await self._send_file_data(f, stream_id)
-
-    async def _send_file_data(self, fileobj, stream_id):
-        """
-        Send the data portion of a file. Handles flow control rules.
-        """
-        while True:
-            while not self.conn.local_flow_control_window(stream_id):
-                await self.wait_for_flow_control(stream_id)
-
-            chunk_size = min(
-                self.conn.local_flow_control_window(stream_id),
-                READ_CHUNK_SIZE,
-            )
-
-            data = fileobj.read(chunk_size)
-            keep_reading = (len(data) == chunk_size)
-
-            self.conn.send_data(stream_id, data, not keep_reading)
-            await self.sock.sendall(self.conn.data_to_send())
-
-            if not keep_reading:
-                break
 
 
 def create_listening_ssl_socket(address, certfile, keyfile):
@@ -168,7 +95,7 @@ class H2Server:
             for event in events:
 
                 if isinstance(event, h2.events.RequestReceived):
-                    await spawn(self.request_received(event.headers, event.stream_id))
+                    await spawn(self.request_received(event))
 
                 elif isinstance(event, h2.events.DataReceived):
                     self.conn.reset_stream(event.stream_id)
@@ -178,47 +105,39 @@ class H2Server:
 
             await self.sock.sendall(self.conn.data_to_send())
 
-    async def request_received(self, headers, stream_id):
+    async def request_received(self, event):
         """
-        Handle a request by attempting to serve a suitable file.
+        Handle a request
         """
-        headers = dict(headers)
-        for k, v in headers.items():
-            print(k, v)
-        assert headers[':method'] == 'GET'
+        headers = dict(event.headers)
+        stream_id = event.stream_id
+        endpoint = EndPointHandler(self, self.sock, self.conn, stream_id)
 
         if headers[':method'] == 'GET':
             route = headers[':path'].lstrip('/')
-
+            
             if route in self.app.routes['GET']:
-                await self.app.routes['GET'][route](EndPointHandler(self.sock, self.conn, headers, stream_id))
+                await self.app.routes['GET'][route](endpoint)
 
-            # if route is not registered, assume it is requesting files
             else:
+                # if route is not registered, assume it is requesting files
                 full_path = os.path.join(self.root, route)
-                if not os.path.exists(full_path):
-                    response_headers = (
-                        (':status', '404'),
-                        ('content-length', '0'),
-                        ('server', 'curio-h2'),
-                    )
-                    self.conn.send_headers(
-                        stream_id, response_headers, end_stream=True
-                    )
-                    await self.sock.sendall(self.conn.data_to_send())
+                if os.path.exists(full_path):
+                    await endpoint.send_file(full_path)
                 else:
-                    await self.send_file(full_path, stream_id)
+                    await endpoint.send_error(404)
 
         elif headers[':method'] == 'POST':
             raise NotImplementedError('Only GET is implemented')
 
         elif headers[':method'] == 'PUT':
             raise NotImplementedError('PUT is not implemented yet')
+
         elif headers[':method'] == 'DELETE':
             raise NotImplementedError('DELETE is not implemented yet')
+
         else:
             raise NotImplementedError(headers[':method']+' is not implemented')
-
 
     async def wait_for_flow_control(self, stream_id):
         """
@@ -245,18 +164,3 @@ class H2Server:
                 event = self.flow_control_events.pop(stream_id)
                 await event.set()
         return
-
-
-if __name__ == '__main__':
-    host = sys.argv[2] if len(sys.argv) > 2 else "localhost"
-    print(sys.argv)
-    kernel = Kernel()
-    print("Try GETting:")
-    print("    On OSX after 'brew install curl --with-c-ares --with-libidn --with-nghttp2 --with-openssl':")
-    print("/usr/local/opt/curl/bin/curl --tlsv1.2 --http2 -k https://localhost:5000/bundle.js")
-    print("Or open a browser to: https://localhost:5000/")
-    print("   (Accept all the warnings)")
-    kernel.run(h2_server((host, 5000),
-                         sys.argv[1],
-                         "{}.crt.pem".format(host),
-                         "{}.key".format(host)))

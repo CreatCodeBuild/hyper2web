@@ -3,19 +3,41 @@ This module is not working yet. Need Improvement.
 """
 import mimetypes
 import os
-
+import h2.events
 
 # The maximum amount of a file we'll send in a single DATA frame.
 READ_CHUNK_SIZE = 8192
 
+active_end_points = {}  # stream_id: end_point_handler
 
 class EndPointHandler:
-	def __init__(self, server, sock, connection, stream_id):
+	def __init__(self, server, sock, connection, stream_id, header, route):
 		self.server = server
 		self.socket = sock
 		self.connection = connection
+		#
 		self.stream_id = stream_id
+		self.header = header
+		self.route = route
+		#
+		self.buffered_data = []
+		self.data = None
 
+	def update(self, event: h2.events.DataReceived):
+		"""
+		assume only POST stream will call this one
+		"""
+		self.buffered_data.append(event.data)
+
+	def finalize(self):
+		"""
+		assume only POST stream will call this one
+		concat all data chunks in this handler to one bytes object
+		"""
+		self.data = b''.join(self.buffered_data)
+		self.buffered_data = None
+
+	"""async functions"""
 	async def send_and_end(self, data):
 
 		# Header

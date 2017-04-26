@@ -19,6 +19,7 @@ import h2.events
 
 
 # The maximum amount of a file we'll send in a single DATA frame.
+from hyper2web import endpoint
 from hyper2web.endpoint import EndPointHandler
 
 READ_CHUNK_SIZE = 8192
@@ -98,37 +99,54 @@ class H2Server:
                     await spawn(self.request_received(event))
 
                 elif isinstance(event, h2.events.DataReceived):
-                    self.conn.reset_stream(event.stream_id)
-
+                    print('DataReceived')
+                    # self.conn.reset_stream(event.stream_id)
+                    await spawn(self.data_received(event))
                 elif isinstance(event, h2.events.WindowUpdated):
                     await self.window_updated(event)
 
             await self.sock.sendall(self.conn.data_to_send())
 
-    async def request_received(self, event):
+    async def data_received(self, event: h2.events.DataReceived):
+        """
+        Handle received data for a certain stream. Currently used for POST
+        """
+        if event.stream_id not in endpoint.active_end_points:
+            # But I think this situation is impossible since header should always arrive before data
+            print('data before header')
+            # raise Exception('data before header')
+            # create a new endpoint
+            endpoint.active_end_points[event.stream_id] = EndPointHandler(self, self.sock, self.conn, event.stream_id)
+
+        # update this handler
+        endpoint.active_end_points[event.stream_id].update(event)
+        # possibly finalize this handler
+        if event.stream_ended:
+            endpoint.active_end_points[event.stream_id].finalize()
+            await self.app.handle_route(endpoint.active_end_points[event.stream_id])
+            del endpoint.active_end_points[event.stream_id]
+
+    # todo: should not directly call handle_route in this function
+    # todo: since a handler may not be finalized
+    async def request_received(self, event: h2.events.RequestReceived):
         """
         Handle a request
         """
         headers = dict(event.headers)
         stream_id = event.stream_id
-        endpoint = EndPointHandler(self, self.sock, self.conn, stream_id)
+        route = headers[':path'].lstrip('/')
+
+        endpoint_handler = EndPointHandler(self, self.sock, self.conn, stream_id=stream_id, header=headers, route=route)
 
         if headers[':method'] == 'GET':
-            route = headers[':path'].lstrip('/')
-            
-            if route in self.app.routes['GET']:
-                await self.app.routes['GET'][route](endpoint)
-
-            else:
-                # if route is not registered, assume it is requesting files
-                full_path = os.path.join(self.root, route)
-                if os.path.exists(full_path):
-                    await endpoint.send_file(full_path)
-                else:
-                    await endpoint.send_error(404)
+            # it's fine to call handle_route for GET since header is the only thing needed
+            await self.app.handle_route(endpoint_handler)
 
         elif headers[':method'] == 'POST':
-            raise NotImplementedError('Only GET is implemented')
+            if stream_id in endpoint.active_end_points:
+                print('should not be')
+                raise Exception('should not be')
+            endpoint.active_end_points[stream_id] = endpoint_handler
 
         elif headers[':method'] == 'PUT':
             raise NotImplementedError('PUT is not implemented yet')

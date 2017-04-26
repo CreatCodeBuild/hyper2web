@@ -11,7 +11,6 @@ class App:
 	def __init__(self, port=5000, root='./public', static_file_handle='auto', root_route='index.html'):
 		self.port = port
 		self.root = os.path.abspath(root)
-		print(self.root)
 		self.server = None
 		self.routes = {'GET': {}, 'POST': {}}
 		self.static_file_handle = static_file_handle
@@ -25,11 +24,36 @@ class App:
 							 root=self.root,
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
-							 app=self))
+							 app=self),
+				   shutdown=True)
 
 	def register_route(self, method: str, route: str, handler):
 		assert method in ['GET', 'POST']
 		self.routes[method][route] = handler
 
-	def get(self, route: str, handler=None):
+	def get(self, route: str, handler):
 		self.register_route('GET', route, handler)
+
+	def post(self, route: str, handler):
+		self.register_route('POST', route, handler)
+
+	async def handle_route(self, endpoint):
+		print('rr')
+		print(self.routes)
+		# print(endpoint)
+		# print(vars(endpoint))
+		print(endpoint.route)
+		print(endpoint.route in self.routes['GET'])
+		print(endpoint.route in self.routes['POST'])
+		if endpoint.route in self.routes['GET'] or endpoint.route in self.routes['POST']:
+			print('h1')
+			await self.routes[endpoint.header[':method']][endpoint.route](endpoint)
+			print('h2')
+		else:
+			print('h3')
+			# if route is not registered, assume it is requesting files
+			full_path = os.path.join(self.root, endpoint.route)
+			if os.path.exists(full_path):
+				await endpoint.send_file(full_path)
+			else:
+				await endpoint.send_error(404)

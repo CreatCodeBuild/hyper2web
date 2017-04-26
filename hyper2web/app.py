@@ -2,7 +2,7 @@ import os
 
 from curio import Kernel
 
-from h2web.server import h2_server
+from hyper2web.server import h2_server
 
 
 # todo: move routing functionality from curio_server to app

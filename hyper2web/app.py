@@ -18,14 +18,11 @@ class App:
 
 	def up(self):
 		kernel = Kernel()
-		print("Try GETting:")
-		print("   (Accept all the warnings)")
 		kernel.run(h2_server(address=("localhost", self.port),
 							 root=self.root,
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
-							 app=self),
-				   shutdown=True)
+							 app=self))
 
 	def register_route(self, method: str, route: str, handler):
 		assert method in ['GET', 'POST']

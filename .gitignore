@@ -2,3 +2,5 @@
 .idea/
 *.pyc
 public/
+.cache/
+__pycache__/

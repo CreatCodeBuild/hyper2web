@@ -3,39 +3,19 @@ This module is not working yet. Need Improvement.
 """
 import mimetypes
 import os
-import h2.events
+
+# from hyper2web import http
 
 # The maximum amount of a file we'll send in a single DATA frame.
 READ_CHUNK_SIZE = 8192
 
-active_end_points = {}  # stream_id: end_point_handler
-
 class EndPointHandler:
-	def __init__(self, server, sock, connection, stream_id, header, route):
+	def __init__(self, server, sock, connection, stream):
 		self.server = server
 		self.socket = sock
 		self.connection = connection
 		#
-		self.stream_id = stream_id
-		self.header = header
-		self.route = route
-		#
-		self.buffered_data = []
-		self.data = None
-
-	def update(self, event: h2.events.DataReceived):
-		"""
-		assume only POST stream will call this one
-		"""
-		self.buffered_data.append(event.data)
-
-	def finalize(self):
-		"""
-		assume only POST stream will call this one
-		concat all data chunks in this handler to one bytes object
-		"""
-		self.data = b''.join(self.buffered_data)
-		self.buffered_data = None
+		self.stream = stream
 
 	"""async functions"""
 	async def send_and_end(self, data):
@@ -53,14 +33,13 @@ class EndPointHandler:
 		if content_encoding:
 			response_headers.append(('content-encoding', content_encoding))
 
-		self.connection.send_headers(self.stream_id, response_headers)
+		self.connection.send_headers(self.stream.stream_id, response_headers)
 		await self.socket.sendall(self.connection.data_to_send())
 
 		# Body
-		self.connection.send_data(self.stream_id, bytes(data), end_stream=True)
+		self.connection.send_data(self.stream.stream_id, bytes(data), end_stream=True)
 		await self.socket.sendall(self.connection.data_to_send())
 
-	# todo: implement it
 	async def send_file(self, file_path):
 		"""
 		Send a file, obeying HTTP/2 flow control rules
@@ -78,16 +57,16 @@ class EndPointHandler:
 		if content_encoding:
 			response_headers.append(('content-encoding', content_encoding))
 
-		self.connection.send_headers(self.stream_id, response_headers)
+		self.connection.send_headers(self.stream.stream_id, response_headers)
 		await self.socket.sendall(self.connection.data_to_send())
 
 		with open(file_path, 'rb', buffering=0) as fileobj:
 			while True:
-				while not self.connection.local_flow_control_window(self.stream_id):
-					await self.server.wait_for_flow_control(self.stream_id)
+				while not self.connection.local_flow_control_window(self.stream.stream_id):
+					await self.server.wait_for_flow_control(self.stream.stream_id)
 
 				chunk_size = min(
-					self.connection.local_flow_control_window(self.stream_id),
+					self.connection.local_flow_control_window(self.stream.stream_id),
 					READ_CHUNK_SIZE,
 				)
 
@@ -95,7 +74,7 @@ class EndPointHandler:
 				data = fileobj.read(chunk_size)
 				keep_reading = (len(data) == chunk_size)
 
-				self.connection.send_data(self.stream_id, data, not keep_reading)
+				self.connection.send_data(self.stream.stream_id, data, not keep_reading)
 				await self.socket.sendall(self.connection.data_to_send())
 
 				if not keep_reading:
@@ -107,5 +86,5 @@ class EndPointHandler:
 			('content-length', '0'),
 			('server', 'curio-h2'),
 		)
-		self.connection.send_headers(self.stream_id, response_headers, end_stream=True)
+		self.connection.send_headers(self.stream.stream_id, response_headers, end_stream=True)
 		await self.socket.sendall(self.connection.data_to_send())

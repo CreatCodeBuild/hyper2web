@@ -1,3 +1,6 @@
+from curio import socket, ssl
+
+
 def create_listening_ssl_socket(address, certfile, keyfile):
     """
     Create and return a listening TLS socket on a given address.

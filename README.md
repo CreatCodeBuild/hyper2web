@@ -30,13 +30,23 @@ if __name__ == '__main__':
 		print('GET name hit')
 		await handler.send_and_end('GET name hit')
 
-	app = app.App(static_file_handle='auto', root_route='index.html')
+	async def post_message(handler):
+		print('Data Received:', str(handler.data, encoding='utf8'))
+		await handler.send_and_end(str(handler.data, encoding='utf8'))
+
+	app = app.App(port=5000)	
 	app.get('name', get_name)
+	app.post('message', post_message)
 	app.up()
 ```
 Then run this script
 ```bash
 python app.py
+```
+That's it! If you just want to serve static files, it's just 2 lines!
+```python
+from hyper2web import app
+app.App(port=5000).up()
 ```
 
 # Todo list:

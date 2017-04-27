@@ -136,23 +136,31 @@ class Stream:
 	"""
 
 	def __init__(self, stream_id: int, headers: dict):
-		self.stream_id = stream_id
-		self.headers = headers  # as the name indicates
-		self.buffered_data = []
-		self.data = None   # I am not sure if body is just binary data, aka, bytes
+		if headers and isinstance(headers, dict):
+			self.stream_id = stream_id
+			self.headers = headers  # as the name indicates
+
+			self.buffered_data = []
+			self.data = None   # I am not sure if body is just binary data, aka, bytes
+		else:
+			raise Exception('http.Stream: Try to construct a Stream without valid headers')
 
 	def update(self, event: events.DataReceived):
 		"""
 		assume only POST stream will call this one
 		"""
-		self.buffered_data.append(event.data)
+		if event.stream_id == self.stream_id:
+			self.buffered_data.append(event.data)
+		else:
+			raise Exception('http.Stream: Try to update a Stream on an event with different stream id')
 
 	def finalize(self):
 		"""
 		assume only POST stream will call this one
 		concat all data chunks in this handler to one bytes object
 		"""
-		self.data = b''.join(self.buffered_data)
+		if len(self.buffered_data) > 0:
+			self.data = b''.join(self.buffered_data)
 		self.buffered_data = None
 
 class GET:

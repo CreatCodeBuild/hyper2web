@@ -8,6 +8,7 @@ Future version might only support Python3.6+ since `curio` might only support 3.
 pip install h2
 pip install curio
 ```
+I will make it available on pip once I have the first release.
 
 This project is at its very early stage. I still need to learn a lot about h2, curio, HTTP and Web.  
 [h2 Github](https://github.com/python-hyper/hyper-h2) [doc](https://python-hyper.org/h2/en/stable/)  
@@ -49,68 +50,23 @@ from hyper2web import app
 app.App(port=5000).up()
 ```
 
-# Todo list:
-### 1. More Complete GET support
-Pattern match of routes with regular expression.
-```
-app.get('user/+', func)
-```
-This matches `user/xxx` but not `user/`
-
-Nested Routes
-```
-app.get('department/+/employee/+', func)
-```
-
-### 2. Support POST
-As the title suggests.
-
-### 3. Several Flavors of router API
-#### Callback Style, which is inspired by ExpressJS (Partially Implemented)
+# Test
+Python modules/packages and imports are confusing. You have to do
 ```python
-async def end_point_function(handler: EndPointHandler):
-	# do something
-	...
-	# send_and_end will send data and end this HTTP2 stream
-	await handler.send_and_end('some data')
-
-app.get('rest_api_path', end_point_function)
+python -m unittest test.The_Name_Of_the_Test_Script
 ```
-#### Decorator Style, which is inspired by Flask
+under the root directory of this repo.
+
+Or run
 ```python
-@app.get('rest_api_path')
-async def end_point_function(handler: EndPointHandler):
-	# do something
-	...
-	# send_and_end will send data and end this HTTP2 stream
-	await handler.send_and_end('some data')
+python -m unittest discover test
 ```
-#### Context Manager Style, which I don't even know if it is possible. I don't know how to implement it but sounds like a cool idea
-```python
-async with app.get('rest_api_path') as handler:
-	# do something
-	...
-	# send_and_end will send data and end this HTTP2 stream
-	await handler.send_and_end('some data')
-```
+to run all tests under `test/` dir.
 
-### 4. Security
-I have zero knowledge.
-
-### 5. Syncronizing API
-Maybe it's a bad idea.
+There could be a better way but I am not sure yet. Again, `import` is confusing in Python once you get into packages.
 
 # Misc
 ## Why did I create this framework?
-April 23rd, 2017, Sunday, I woke up and felt bored and decided to create my own HTTP2 web framework for the sake of having fun and learning. 
+April 23rd, 2017, Sunday, I woke up and felt bored and decided to create my own HTTP2 web framework.
 
-Since I did not have much prior web knowledge, this would be a super learning project for me.
-
-I had heard of that HTTP2 was the future since the end of 2015 and I had watached some Python talks about HTTP2 in PyConf2016.
-
-But one year has passed, I have not found any full HTTP2 server framework yet.
-
-Also, async programming has been widely talked about but not many people seemed to actually do it. 
-(Unless you consider JavaScript people, where they have no choice)
-
-Furthermore, generator style async io is much more fun than callback style.
+Since I had little or some prior web knowledge, this would be a super learning and fun project for me.

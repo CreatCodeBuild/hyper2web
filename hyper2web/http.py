@@ -9,8 +9,8 @@ from curio import spawn, Event
 
 from h2 import events
 
-from hyper2web.endpoint import EndPointHandler
-from hyper2web.abstract import AbstractApp
+from .endpoint import EndPointHandler
+from .abstract import AbstractApp
 # from hyper2web.server import H2Server
 
 class HTTP:

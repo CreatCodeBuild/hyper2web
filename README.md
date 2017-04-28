@@ -26,14 +26,15 @@ from hyper2web import app
 if __name__ == '__main__':
 
 	# A basic callback style API is provided
-	async def get_name(http, stream):
+	# The naming of this function is up to you
+	async def post_echo(http, stream):
 		# this route essentially echo the data received back to client
 		print('data received:')
 		print(str(stream.data, encoding='utf8'))
 		await http.send_and_end(stream, stream.data)
 
 	app = app.App(port=5000)
-	app.post('name', get_name)
+	app.post('name', post_echo)
 	app.up()
 ```
 Then run this script

@@ -48,8 +48,7 @@ class H2Server:
 
         # the Application that needs this server
         # this server runs this app
-        self.app = app
-        self.http = HTTP(app, self)
+        self.http = HTTP(app=app, sock=self.sock, connection=self.conn)
 
     async def run(self):
         """

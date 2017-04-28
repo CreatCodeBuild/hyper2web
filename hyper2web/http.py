@@ -4,20 +4,67 @@ This module implements HTTP methods for end user
 I currently think that they should be synchronized since they should not do IO
 Where as endpoint module is designed for IO
 """
+import mimetypes
+import os
 
 from curio import spawn, Event
 
 from h2 import events
+from h2.connection import H2Connection
 
-from .endpoint import EndPointHandler
 from .abstract import AbstractApp
-# from hyper2web.server import H2Server
+
+READ_CHUNK_SIZE = 8192
+
+
+class Stream:
+	"""
+	As the code is right now, many stream implementation is done in endpoint.EndPointHandler
+	Am moving those functionality to this class
+
+	The current design is that application will only return complete stream to top level api
+	But, since a user might also want to program on a live stream.
+	For example, the client may send a giant file 1GB,
+	the user will want to write this stream to disk in real time
+	Also, buffering 1GB in memory is kind of stupid.
+
+	But nonethelss, the current focus is on better organization of code instead of more API or performace.
+	"""
+
+	def __init__(self, stream_id: int, headers: dict):
+		if headers and isinstance(headers, dict):
+			self.stream_id = stream_id
+			self.headers = headers  # as the name indicates
+
+			self.buffered_data = []
+			self.data = None  # I am not sure if body is just binary data, aka, bytes
+		else:
+			raise Exception('http.Stream: Try to construct a Stream without valid headers')
+
+	def update(self, event: events.DataReceived):
+		"""
+		assume only POST stream will call this one
+		"""
+		if event.stream_id == self.stream_id:
+			self.buffered_data.append(event.data)
+		else:
+			raise Exception('http.Stream: Try to update a Stream on an event with different stream id')
+
+	def finalize(self):
+		"""
+		assume only POST stream will call this one
+		concat all data chunks in this handler to one bytes object
+		"""
+		if len(self.buffered_data) > 0:
+			self.data = b''.join(self.buffered_data)
+		self.buffered_data = None
+
 
 class HTTP:
 	"""
 	This class further implements complete HTTP2 on top of h2
 	"""
-	def __init__(self, app: AbstractApp, server):
+	def __init__(self, app: AbstractApp, sock, connection: H2Connection):
 		# not like h2 events which might only contain partial information of a request
 		# a http.Stream contain full information of a request (Could pick a better name)
 		# key: stream id,
@@ -27,22 +74,20 @@ class HTTP:
 		# the app will create an EndPointHandler object to wrap the stream and pass it to top level API
 
 		self.app = app
-		self.server = server
+		self.sock = sock
+		self.connection = connection
 		self.flow_control_events = {}
 
 	def _finalize_stream(self, stream_id):
 		stream = self.streams.pop(stream_id)
 		stream.finalize()
-		return EndPointHandler(server=self.server,
-							   sock=self.server.sock,
-							   connection=self.server.conn,
-							   stream=stream)
+		return stream
 
 	# async
 	async def _check_event_end_stream(self, event):
 		if event.stream_ended:
-			endpoint_handler = self._finalize_stream(event.stream_id)
-			await self.app.handle_route(endpoint_handler)
+			stream = self._finalize_stream(event.stream_id)
+			await self.app.handle_route(self, stream)
 
 	async def handle_event(self, event: events.Event):
 
@@ -111,59 +156,72 @@ class HTTP:
 				event = self.flow_control_events.pop(stream_id)
 				await event.set()
 
-class Stream:
-	"""
-	As the code is right now, many stream implementation is done in endpoint.EndPointHandler
-	Am moving those functionality to this class
-	
-	The current design is that application will only return complete stream to top level api
-	But, since a user might also want to program on a live stream.
-	For example, the client may send a giant file 1GB,
-	the user will want to write this stream to disk in real time
-	Also, buffering 1GB in memory is kind of stupid.
-	
-	But nonethelss, the current focus is on better organization of code instead of more API or performace.
-	"""
+	"""async functions"""
+	async def send_and_end(self, stream: Stream, data: bytes):
+		"""Send data associate with this stream to client and end the stream"""
+		# Headers
+		content_type, content_encoding = mimetypes.guess_type(str(data, encoding='utf8'))
+		print(content_type, content_encoding)
+		response_headers = [
+			(':status', '200'),
+			('content-length', str(len(data))),
+			('server', 'hyper2web'),
+		]
+		if content_type:
+			response_headers.append(('content-type', content_type))
+		if content_encoding:
+			response_headers.append(('content-encoding', content_encoding))
 
-	def __init__(self, stream_id: int, headers: dict):
-		if headers and isinstance(headers, dict):
-			self.stream_id = stream_id
-			self.headers = headers  # as the name indicates
+		self.connection.send_headers(stream.stream_id, response_headers)
+		await self.sock.sendall(self.connection.data_to_send())
 
-			self.buffered_data = []
-			self.data = None   # I am not sure if body is just binary data, aka, bytes
-		else:
-			raise Exception('http.Stream: Try to construct a Stream without valid headers')
+		# Body
+		self.connection.send_data(stream.stream_id, data, end_stream=True)
+		await self.sock.sendall(self.connection.data_to_send())
 
-	def update(self, event: events.DataReceived):
+	async def send_file(self, stream: Stream, file_path: str):
 		"""
-		assume only POST stream will call this one
+		Send a file, obeying HTTP/2 flow control rules
 		"""
-		if event.stream_id == self.stream_id:
-			self.buffered_data.append(event.data)
-		else:
-			raise Exception('http.Stream: Try to update a Stream on an event with different stream id')
+		# use Python default open
+		filesize = os.stat(file_path).st_size
+		content_type, content_encoding = mimetypes.guess_type(file_path)
+		response_headers = [
+			(':status', '200'),
+			('content-length', str(filesize)),
+			('server', 'curio-h2'),
+		]
+		if content_type:
+			response_headers.append(('content-type', content_type))
+		if content_encoding:
+			response_headers.append(('content-encoding', content_encoding))
 
-	def finalize(self):
-		"""
-		assume only POST stream will call this one
-		concat all data chunks in this handler to one bytes object
-		"""
-		if len(self.buffered_data) > 0:
-			self.data = b''.join(self.buffered_data)
-		self.buffered_data = None
+		self.connection.send_headers(stream.stream_id, response_headers)
+		await self.sock.sendall(self.connection.data_to_send())
 
-class GET:
-	pass
+		# Body
+		with open(file_path, 'rb', buffering=0) as fileobj:
+			while True:
+				while not self.connection.local_flow_control_window(stream.stream_id):
+					await self.wait_for_flow_control(stream.stream_id)
 
-class POST:
-	pass
+				chunk_size = min(self.connection.local_flow_control_window(stream.stream_id), READ_CHUNK_SIZE)
 
-class PUT:
-	pass
+				# this line is sync
+				data = fileobj.read(chunk_size)
+				keep_reading = (len(data) == chunk_size)
 
-class DELETE:
-	pass
+				self.connection.send_data(stream.stream_id, data, not keep_reading)
+				await self.sock.sendall(self.connection.data_to_send())
 
-class PATCH:
-	pass
+				if not keep_reading:
+					break
+
+	async def send_error(self, stream, error):
+		response_headers = (
+			(':status', str(error)),
+			('content-length', '0'),
+			('server', 'curio-h2'),
+		)
+		self.connection.send_headers(stream.stream_id, response_headers, end_stream=True)
+		await self.sock.sendall(self.connection.data_to_send())

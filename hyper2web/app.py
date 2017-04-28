@@ -2,7 +2,8 @@ import os
 
 from curio import Kernel
 
-from hyper2web import server, abstract
+from . import server, abstract
+from .http import HTTP, Stream
 
 AbstractApp = abstract.AbstractApp
 h2_server = server.h2_server
@@ -37,18 +38,16 @@ class App(AbstractApp):
 		self.register_route('POST', route, handler)
 
 	# async
-	async def handle_route(self, endpoint):
+	async def handle_route(self, http: HTTP, stream: Stream):
 		print('app.App.handle_route')
-		print(type(endpoint))
-		print(endpoint.stream)
-		print(endpoint.stream.headers)
-		route = endpoint.stream.headers[':path'].lstrip('/')
+    
+		route = stream.headers[':path'].lstrip('/')
 		if route in self.routes['GET'] or route in self.routes['POST']:
-			await self.routes[endpoint.stream.headers[':method']][route](endpoint)
+			await self.routes[stream.headers[':method']][route](http, stream)
 		else:
 			# if route is not registered, assume it is requesting files
 			full_path = os.path.join(self.root, route)
 			if os.path.exists(full_path):
-				await endpoint.send_file(full_path)
+				await http.send_file(stream, full_path)
 			else:
-				await endpoint.send_error(404)
+				await http.send_error(stream, 404)

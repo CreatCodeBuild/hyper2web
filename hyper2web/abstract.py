@@ -16,5 +16,5 @@ class AbstractApp:
     def post(self, route: str, handler):
         raise NotImplementedError
 
-    async def handle_route(self, endpoint):
+    async def handle_route(self, http, stream):
         raise NotImplementedError

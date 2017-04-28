@@ -10,19 +10,18 @@ class TestStream(unittest.TestCase):
 			Stream(stream_id=1, headers={})
 
 	def test_update_on_same_stream_id(self):
+		"""A Stream should not update on an event with different stream id"""
 		stream = Stream(stream_id=1, headers={'method': 'GET'})
 		new_event = DataReceived()
 		new_event.stream_id = 2
 		new_event.data = b''
-
-		# should raise error since a Stream should not update on an event with different stream id
 		with self.assertRaises(Exception):
 			stream.update(new_event)
 
 	def test_finalize(self):
+		"""Should not update a finalized Stream"""
 		stream = Stream(stream_id=1, headers={'method': 'GET'})
 		stream.finalize()
-
 		with self.assertRaises(Exception):
 			new_event = DataReceived()
 			new_event.stream_id = 2

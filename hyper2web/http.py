@@ -30,18 +30,29 @@ class HTTP:
 		self.server = server
 		self.flow_control_events = {}
 
+	def _finalize_stream(self, stream_id):
+		stream = self.streams.pop(stream_id)
+		stream.finalize()
+		return EndPointHandler(server=self.server,
+							   sock=self.server.sock,
+							   connection=self.server.conn,
+							   stream=stream)
+
+	# async
+	async def _check_event_end_stream(self, event):
+		if event.stream_ended:
+			endpoint_handler = self._finalize_stream(event.stream_id)
+			await self.app.handle_route(endpoint_handler)
+
 	async def handle_event(self, event: events.Event):
 
 		if isinstance(event, events.RequestReceived):
-			print(1)
 			await spawn(self.request_received(event))
 
 		elif isinstance(event, events.DataReceived):
-			print(2)
 			await spawn(self.data_received(event))
 
 		elif isinstance(event, events.WindowUpdated):
-			print(3)
 			await self.window_updated(event)
 
 		# todo: need to support all h2.events
@@ -50,26 +61,16 @@ class HTTP:
 		"""
 		Handle a request
 		"""
-		# endpoint_handler = EndPointHandler(self, self.sock, self.conn, stream_id=stream_id, header=headers, route=route)
 		if event.stream_id in self.streams:
 			raise Exception('RequestReceived should only be present for new stream. I assume')
 		else:
-			print('xxx')
 			self.streams[event.stream_id] = Stream(event.stream_id, dict(event.headers))
 
 		# I am not sure if GET will only trigger a RequestReceived event
 		# this event should be METHOD independent? I should ask h2 author if all events are method independent
 
 		# pass if this event complete a stream, create an EndPointHandler and pass it to API user
-		if event.stream_ended:
-			stream = self.streams.pop(event.stream_id)
-			print(stream)
-			await self.app.handle_route(
-				EndPointHandler(
-					server=self.server,
-					sock=self.server.sock,
-					connection=self.server.conn,
-					stream=stream))
+		await self._check_event_end_stream(event)
 
 	async def data_received(self, event: events.DataReceived):
 		"""
@@ -80,20 +81,10 @@ class HTTP:
 			print('data before header')
 			raise Exception('data before header')
 
-
 		# update this handler
 		self.streams[event.stream_id].update(event)
 		# possibly finalize this handler
-		if event.stream_ended:
-			stream = self.streams.pop(event.stream_id)
-			print(stream)
-			stream.finalize()
-			await self.app.handle_route(
-				EndPointHandler(
-					server=self.server,
-					sock=self.server.sock,
-					connection=self.server.conn,
-					stream=stream))
+		await self._check_event_end_stream(event)
 
 	async def wait_for_flow_control(self, stream_id):
 		"""
@@ -119,7 +110,6 @@ class HTTP:
 			for stream_id in blocked_streams:
 				event = self.flow_control_events.pop(stream_id)
 				await event.set()
-		return
 
 class Stream:
 	"""

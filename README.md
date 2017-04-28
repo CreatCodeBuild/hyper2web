@@ -21,23 +21,19 @@ Under this repo, create a dir `public` or whatever names, put your frontend code
 
 Then create an `app.py` or whatever names.
 ```python
-# app.py
 from hyper2web import app
 
 if __name__ == '__main__':
 
 	# A basic callback style API is provided
-	async def get_name(handler):
-		print('GET name hit')
-		await handler.send_and_end('GET name hit')
+	async def get_name(http, stream):
+		# this route essentially echo the data received back to client
+		print('data received:')
+		print(str(stream.data, encoding='utf8'))
+		await http.send_and_end(stream, stream.data)
 
-	async def post_message(handler):
-		print('Data Received:', str(handler.data, encoding='utf8'))
-		await handler.send_and_end(str(handler.data, encoding='utf8'))
-
-	app = app.App(port=5000)	
-	app.get('name', get_name)
-	app.post('message', post_message)
+	app = app.App(port=5000)
+	app.post('name', get_name)
 	app.up()
 ```
 Then run this script

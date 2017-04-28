@@ -40,7 +40,7 @@ class App(AbstractApp):
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):
 		print('app.App.handle_route')
-
+    
 		route = stream.headers[':path'].lstrip('/')
 		if route in self.routes['GET'] or route in self.routes['POST']:
 			await self.routes[stream.headers[':method']][route](http, stream)

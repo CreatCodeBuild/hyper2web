@@ -9,18 +9,19 @@ A fully-functional HTTP/2 server written for curio.
 Requires Python 3.5+.
 """
 
-from curio import Event, spawn
+from curio import spawn
 
 import h2.config
 import h2.connection
 import h2.events
 
 # hyper2web imports
-from hyper2web import sslsocket, abstract, http
+from . import sslsocket, abstract, http
 create_listening_ssl_socket = sslsocket.create_listening_ssl_socket
 HTTP = http.HTTP
 
 
+# todo: move this to app.App
 async def h2_server(address, certfile, keyfile, app: abstract.AbstractApp):
     """
     Create an HTTP/2 server at the given address.

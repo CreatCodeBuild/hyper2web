@@ -9,6 +9,6 @@ if __name__ == '__main__':
 		print(str(stream.data, encoding='utf8'))
 		await http.send_and_end(stream, stream.data)
 
-	app = app.App(static_file_handle='auto', root_route='index.html')
+	app = app.App()
 	app.post('name', get_name)
 	app.up()

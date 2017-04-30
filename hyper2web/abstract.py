@@ -29,3 +29,17 @@ class AbstractRouter:
 
     async def handle_route(self, http, stream):
         raise NotImplementedError
+
+
+class AbstractHTTP:
+    async def handle_event(self, event):
+        raise NotImplementedError
+
+    async def send_and_end(self, stream, data):
+        raise NotImplementedError
+
+    async def send_file(self, stream, file_path):
+        raise NotImplementedError
+
+    async def send_error(self, stream, error):
+        raise NotImplementedError

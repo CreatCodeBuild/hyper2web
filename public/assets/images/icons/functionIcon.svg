@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="14px" height="14px" viewBox="0 0 14 14" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>method</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Screen" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="View-Diagram" transform="translate(-348.000000, -334.000000)">
+            <g id="class" transform="translate(328.000000, 171.000000)">
+                <g id="methods" transform="translate(20.000000, 161.000000)">
+                    <g id="method">
+                        <g transform="translate(0.000000, 2.000000)">
+                            <circle id="bg-(-constructor-)" fill="#2096F3" cx="7" cy="7" r="7"></circle>
+                            <polygon id="F" fill="#FFFFFF" points="5 4 9.16201498 4 9.16201498 4.73519401 5.81279782 4.73519401 5.81279782 6.55684139 8.75765827 6.55684139 8.75765827 7.27161334 5.81279782 7.27161334 5.81279782 10 5 10"></polygon>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

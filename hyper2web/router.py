@@ -7,6 +7,7 @@ from .http import HTTP, Stream
 class Router(AbstractRouter):
 	"""User should never construct Router"""
 
+	# todo: I may want to change the constructor
 	def __init__(self, default_get, default_post):
 		self._routes = {
 			'GET': {},

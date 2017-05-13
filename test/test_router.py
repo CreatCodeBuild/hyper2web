@@ -39,3 +39,13 @@ class TestRouter(unittest.TestCase):
 		router.post('x', f)
 		coroutine = router.handle_route(None, stream)
 		run(coroutine)
+
+	def test_parameterized_route(self):
+		router = Router(None, None)
+		the_route = 'user/{user}'
+		router._route('GET', the_route, None)
+		matched, parameters = router.match('/user/abc')		# todo: to be implemented
+		self.assertEqual(the_route, matched)
+		self.assertEqual(parameters['user'], 'abc')
+
+	# will want to test with unicode

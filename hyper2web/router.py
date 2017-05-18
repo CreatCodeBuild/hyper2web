@@ -28,6 +28,37 @@ class Router(AbstractRouter):
 	def post(self, route: str, handler):
 		self._route('POST', route, handler)
 
+	def match(self, path: str):
+		"""
+		'user/{userId}' should match 'user/abc'
+		userId = abc
+		return a tuple (matched, parameters)
+		matched is the route which matches the incoming path
+		parameters is a dict of parameters and their values
+		"""
+		# todo: now the problem is how to implement it
+		# todo: pattern matching should be independent from :method,
+		# todo: but the current implementation doesn't support it. Should improve it later.
+		# GET
+		for route in self._routes['GET'].keys():
+			matched, parameters = self._match(route, path)
+			if matched:
+				return route, parameters
+
+		# POST
+		pass
+
+	@classmethod
+	def _match(cls, route, path):
+		# todo: it seems like that regular expression is not necessary
+		route = route.split('/')
+		path = path.split('/')
+		if len(route) != len(path):
+			return False, None
+		else:
+			# todo: implement it
+			pass
+
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):
 		print('app.App.handle_route')

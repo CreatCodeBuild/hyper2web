@@ -18,6 +18,7 @@ class TestRouter(unittest.TestCase):
 			coroutine = router.handle_route(None, stream)
 			run(coroutine)
 
+	# todo: this test has some problem
 	def test_get_existing_route(self):
 		router = Router(None, None)
 		stream = Stream(1, {':path': 'x', ':method': 'GET'})
@@ -40,12 +41,15 @@ class TestRouter(unittest.TestCase):
 		coroutine = router.handle_route(None, stream)
 		run(coroutine)
 
-	def test_parameterized_route(self):
-		router = Router(None, None)
-		the_route = 'user/{user}'
-		router._route('GET', the_route, None)
-		matched, parameters = router.match('/user/abc')		# todo: to be implemented
-		self.assertEqual(the_route, matched)
-		self.assertEqual(parameters['user'], 'abc')
+	def test_match(self):
+		# match true
+		matched, parameters = Router._match('user/{userId}/name/{name}', 'user/123/name/John')
+		self.assertTrue(matched)
+		self.assertEqual(parameters['userId'], '123')
+		self.assertEqual(parameters['name'], 'John')
+
+		# match false
+		matched, parameters = Router._match('user/{userId}/name/{name}', 'user/123/nam/John')
+		self.assertFalse(matched)
 
 	# will want to test with unicode

@@ -57,7 +57,13 @@ class Router(AbstractRouter):
 			return False, None
 		else:
 			# todo: implement it
-			pass
+			parameters = {}
+			for r, p in zip(route, path):
+				if r[0] == '{' and r[-1] == '}':
+					parameters[r[1:-1]] = p
+				elif r != p:
+					return False, None
+			return True, parameters
 
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):

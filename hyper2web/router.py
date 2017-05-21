@@ -39,18 +39,16 @@ class Router(AbstractRouter):
 		# todo: now the problem is how to implement it
 		# todo: pattern matching should be independent from :method,
 		# todo: but the current implementation doesn't support it. Should improve it later.
-		# GET
-		for route in self._routes['GET'].keys():
-			matched, parameters = self._match(route, path)
-			if matched:
-				return route, parameters
-
-		# POST
-		pass
+		for routes_of_this_method in self._routes.values():
+			for route in routes_of_this_method:
+				matched, parameters = self._match(route, path)
+				if matched:
+					return route, parameters
 
 	@classmethod
 	def _match(cls, route, path):
 		# todo: it seems like that regular expression is not necessary
+		# note: Could it be simpler? Could regex help?
 		route = route.split('/')
 		path = path.split('/')
 		if len(route) != len(path):
@@ -69,8 +67,11 @@ class Router(AbstractRouter):
 	async def handle_route(self, http: HTTP, stream: Stream):
 		print('app.App.handle_route')
 
-		route = stream.headers[':path'].lstrip('/')
+		path = stream.headers[':path'].lstrip('/')
 		method = stream.headers[':method']
 
+		route, parameters = self.match(path)
+
 		handler = self._routes[method].get(route, self.method_default[method])
-		await handler(http, stream)
+		if handler is not None:
+			await handler(http, stream, parameters=parameters)

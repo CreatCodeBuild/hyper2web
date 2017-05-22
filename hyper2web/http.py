@@ -12,7 +12,7 @@ from curio import spawn, Event
 from h2 import events
 from h2.connection import H2Connection
 
-from .abstract import AbstractApp
+from .abstract import AbstractApp, AbstractHTTP
 
 READ_CHUNK_SIZE = 8192
 
@@ -60,7 +60,7 @@ class Stream:
 		self.buffered_data = None
 
 
-class HTTP:
+class HTTP(AbstractHTTP):
 	"""
 	This class further implements complete HTTP2 on top of h2
 	"""

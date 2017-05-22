@@ -28,7 +28,8 @@ class App(AbstractApp):
 		self.default_file = default_file
 
 		if auto_serve_static_file:
-			async def default_get(http, stream):
+			async def default_get(http, stream, parameters):
+				print('default_get')
 				route = stream.headers[':path'].lstrip('/')
 				full_path = os.path.join(self.root, route)
 				if os.path.exists(full_path):
@@ -36,9 +37,9 @@ class App(AbstractApp):
 				else:
 					await http.send_error(stream, 404)
 
-			self._router = router(default_get, None)
+			self._router = router(default_get)
 		else:
-			self._router = router(None, None)
+			self._router = router(None)
 
 	def up(self):
 		kernel = Kernel()
@@ -49,10 +50,10 @@ class App(AbstractApp):
 				   shutdown=True)
 
 	def get(self, route: str, handler):
-		self._router.get(route, handler)
+		self._router.register('GET', route, handler)
 
 	def post(self, route: str, handler):
-		self._router.post(route, handler)
+		self._router.register('POST', route, handler)
 
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):

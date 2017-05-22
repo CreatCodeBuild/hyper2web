@@ -8,27 +8,18 @@ class Router(AbstractRouter):
 	"""User should never construct Router"""
 
 	# todo: I may want to change the constructor
-	def __init__(self, default_get, default_post):
+	def __init__(self, default_get):
 		self._routes = {
 			'GET': {},
 			'POST': {}
 		}
-		self.method_default = {
-			'GET': default_get,
-			'POST': default_post
-		}
+		self.default_get = default_get
 
-	def _route(self, method: str, route: str, handler):
-		assert method in ['GET', 'POST']
+	def register(self, method: str, route: str, handler):
+		assert method in ['GET', 'POST']  # 这只是目前为了测试而加的限制
 		self._routes[method][route] = handler
 
-	def get(self, route: str, handler):
-		self._route('GET', route, handler)
-
-	def post(self, route: str, handler):
-		self._route('POST', route, handler)
-
-	def match(self, path: str):
+	def find_match(self, path: str):
 		"""
 		'user/{userId}' should match 'user/abc'
 		userId = abc
@@ -39,11 +30,14 @@ class Router(AbstractRouter):
 		# todo: now the problem is how to implement it
 		# todo: pattern matching should be independent from :method,
 		# todo: but the current implementation doesn't support it. Should improve it later.
+		print(self._routes.values())
 		for routes_of_this_method in self._routes.values():
+			print(routes_of_this_method)
 			for route in routes_of_this_method:
 				matched, parameters = self._match(route, path)
 				if matched:
 					return route, parameters
+		return None, None
 
 	@classmethod
 	def _match(cls, route, path):
@@ -70,8 +64,23 @@ class Router(AbstractRouter):
 		path = stream.headers[':path'].lstrip('/')
 		method = stream.headers[':method']
 
-		route, parameters = self.match(path)
+		route, parameters = self.find_match(path)
+		print('app.App.handle_route', route)
 
-		handler = self._routes[method].get(route, self.method_default[method])
+		# 如果没有任何匹配，就默认为静态文件读取
+		if route is None:
+			if method == 'GET':
+				print('GET')
+				handler = self.default_get
+			else:
+				handler = None
+		else:
+			handler = self._routes[method].get(route, None)
+
 		if handler is not None:
-			await handler(http, stream, parameters=parameters)
+			print('handle')
+			print(handler)
+			await handler(http, stream, parameters)
+		else:
+			# maybe raise an error?
+			raise Exception(path, 'is not a valid request path')

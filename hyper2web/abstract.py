@@ -18,13 +18,7 @@ class AbstractApp:
 
 
 class AbstractRouter:
-    def _route(self, method: str, route: str, handler):
-        raise NotImplementedError
-
-    def get(self, route: str, handler):
-        raise NotImplementedError
-
-    def post(self, route: str, handler):
+    def register(self, method: str, route: str, handler):
         raise NotImplementedError
 
     async def handle_route(self, http, stream):

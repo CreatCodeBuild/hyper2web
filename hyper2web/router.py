@@ -30,42 +30,43 @@ class Router(AbstractRouter):
 		# todo: now the problem is how to implement it
 		# todo: pattern matching should be independent from :method,
 		# todo: but the current implementation doesn't support it. Should improve it later.
-		print(self._routes.values())
 		for routes_of_this_method in self._routes.values():
-			print(routes_of_this_method)
 			for route in routes_of_this_method:
 				matched, parameters = self._match(route, path)
+				# this function returns the first match, not the best match
 				if matched:
 					return route, parameters
 		return None, None
 
 	@classmethod
 	def _match(cls, route, path):
-		# todo: it seems like that regular expression is not necessary
-		# note: Could it be simpler? Could regex help?
-		route = route.split('/')
-		path = path.split('/')
+		# '/something/xxx/' to 'something/xxx'. Get rid of '/' at the left and the right end of a string
+		route = route.lstrip('/').rstrip('/').split('/')
+		path = path.lstrip('/').rstrip('/').split('/')
+		print(route, path)
 		if len(route) != len(path):
 			return False, None
 		else:
 			# todo: implement it
 			parameters = {}
 			for r, p in zip(route, path):
+				if r == p == '':
+					return True, None
 				if r[0] == '{' and r[-1] == '}':
 					parameters[r[1:-1]] = p
 				elif r != p:
 					return False, None
+			print('out of for loop')
 			return True, parameters
 
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):
 		print('app.App.handle_route')
 
-		path = stream.headers[':path'].lstrip('/')
+		path = stream.headers[':path']
 		method = stream.headers[':method']
 
 		route, parameters = self.find_match(path)
-		print('app.App.handle_route', route)
 
 		# 如果没有任何匹配，就默认为静态文件读取
 		if route is None:

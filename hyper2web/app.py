@@ -41,13 +41,18 @@ class App(AbstractApp):
 		else:
 			self._router = router(None)
 
+		# will server this file on GET '/'
+		if default_file:
+			async def get_index(http, stream, para):
+				await http.send_file(stream, os.path.join(self.root, self.default_file))
+			self.get('/', get_index)
+
 	def up(self):
 		kernel = Kernel()
 		kernel.run(h2_server(address=("localhost", self.port),
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
-							 app=self),
-				   shutdown=True)
+							 app=self))
 
 	def get(self, route: str, handler):
 		self._router.register('GET', route, handler)

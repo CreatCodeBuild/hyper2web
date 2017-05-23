@@ -1,6 +1,11 @@
 # common
 .idea/
 *.pyc
-public/
+example/
 .cache/
 __pycache__/
+
+# package
+build/
+dist/
+*.egg-info

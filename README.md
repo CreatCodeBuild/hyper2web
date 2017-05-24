@@ -1,25 +1,34 @@
 # Super Fast HTTP2 Framework for Progressive Web Application
 
-
-# Dependency
-Python3.5+  
-Future version might only support Python3.6+ since `curio` might only support 3.6+ in the future.
-```bash
-pip install h2
-pip install curio
+# Installation
+Clone this project to your local directory. In this directory, 
 ```
-I will make it available on pip once I have the first release.
+python setup.py
+```
+This will automatically install `hyper2web` to the associated Python as a site-package.
 
-This project is at its very early stage. I still need to learn a lot about h2, curio, HTTP and Web.  
+I will make it available on PyPi once I have the first release.
+
+## Python Version
+Python3.5+
+
+## Dependency
+This project uses `h2` and `curio`.
+
 [h2 Github](https://github.com/python-hyper/hyper-h2) [doc](https://python-hyper.org/h2/en/stable/)  
 [curio Github](https://github.com/dabeaz/curio) [doc](https://curio.readthedocs.io/en/latest/)
 
 # How to
-First clone this repo to your disk.
-
-Under this repo, create a dir `public` or whatever names, put your frontend code there.
-
-Then create an `app.py` or whatever names.
+Assuming you have a directory structure like
+```
+your project/
+--public/
+  --index.html
+  --index.js
+  ...
+--app.py
+```
+Your `app.py` looks like
 ```python
 from hyper2web import app
 

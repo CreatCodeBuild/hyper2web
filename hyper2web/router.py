@@ -47,11 +47,13 @@ class Router(AbstractRouter):
 		if len(route) != len(path):
 			return False, None
 		else:
-			# todo: implement it
+			# todo: optimize the logic
 			parameters = {}
 			for r, p in zip(route, path):
 				if r == p == '':
 					return True, None
+				if r == '' and r != p:
+					return False, None
 				if r[0] == '{' and r[-1] == '}':
 					parameters[r[1:-1]] = p
 				elif r != p:

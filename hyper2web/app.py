@@ -29,7 +29,6 @@ class App(AbstractApp):
 
 		if auto_serve_static_file:
 			async def default_get(http, stream, parameters):
-				print('default_get')
 				route = stream.headers[':path'].lstrip('/')
 				full_path = os.path.join(self.root, route)
 				if os.path.exists(full_path):

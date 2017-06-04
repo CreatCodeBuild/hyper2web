@@ -1,7 +1,7 @@
 # common
 .idea/
 *.pyc
-example/*
+/example/*
 .cache/
 __pycache__/
 

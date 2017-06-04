@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Atom Master 元素大师</title>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <!--Vue-->
+    <script src="https://unpkg.com/vue"></script>
+    <!--CreateJS-->
+    <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
+    <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+    <!--My-->
+    <script src="game.js"></script>
+</head>
+<body>
+	<canvas
+		id='game_canvas'
+		width='800'
+		height='600'
+		style='
+			border:solid 1px black;
+			margin-top: 60px;'>
+	</canvas>
+	<div id="game_ui">
+		<h3>User Arrow Key to control the point</h3>
+		<h3>Your Goal is to reach the center, avoiding blue electrons</h3>
+	</div>
+
+    <div id="about_this_app">
+        This application is served by
+        <a target="_blank" href="https://github.com/CreatCodeBuild/hyper2web">Hyper2Web</a>
+        , an enjoyable Python web framework written by me.
+    </div>
+</body>
+<script src="index.js"></script>
+</html>

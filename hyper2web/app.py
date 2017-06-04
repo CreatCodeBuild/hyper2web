@@ -51,7 +51,8 @@ class App(AbstractApp):
 		kernel.run(h2_server(address=("localhost", self.port),
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
-							 app=self))
+							 app=self),
+				   shutdown=True)
 
 	def get(self, route: str, handler):
 		self._router.register('GET', route, handler)

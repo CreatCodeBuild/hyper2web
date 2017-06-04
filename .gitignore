@@ -1,7 +1,7 @@
 # common
 .idea/
 *.pyc
-example/
+example/*
 .cache/
 __pycache__/
 
@@ -9,3 +9,4 @@ __pycache__/
 build/
 dist/
 *.egg-info
+!example/game/*

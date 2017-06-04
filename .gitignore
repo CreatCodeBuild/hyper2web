@@ -2,6 +2,7 @@
 .idea/
 *.pyc
 /example/*
+/example/game/game_record.json
 .cache/
 __pycache__/
 

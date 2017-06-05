@@ -1,4 +1,4 @@
-function Game() {
+const Game = (function() {
 
     //used as a static factory
     let MagicalPoint = {
@@ -230,8 +230,8 @@ function Game() {
         run: function() {
             let stage = new createjs.Stage("game_canvas");
             Animator.init(stage);
-            Game.currentLevel = 4;
-            this.initLevel(4);
+            Game.currentLevel = 0;
+            this.initLevel(Game.currentLevel);
         },
 
         initLevel: function(levelIndex) {
@@ -293,6 +293,9 @@ function Game() {
                 Game.checkGameState();
             });
             createjs.Ticker.addEventListener("tick", Animator.stage);
+
+            // set up timer
+            this.levels[this.currentLevel].startTime = Date.now()
         },
 
         goToNextLevel: function() {
@@ -320,6 +323,13 @@ function Game() {
         checkGameState: function() {
             //console.log('Game.checkGameState()');
             if(Game.isLevelCompleted()) {
+                // todo: post time record to server
+                let timeUsed = Date.now() - this.levels[this.currentLevel].startTime;
+                Service.post_record({
+                    level: this.currentLevel,
+                    timeUsed: timeUsed,
+                    user: "Master"
+                });
                 Game.goToNextLevel();
             }
         },
@@ -336,8 +346,5 @@ function Game() {
         }
     };
 
-    return { //public API
-        Game: Game
-    }
-}
-
+    return Game;
+})();

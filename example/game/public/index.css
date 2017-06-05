@@ -1,0 +1,14 @@
+#about_this_app {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+}
+
+#game_canvas {
+	border:solid 1px black;
+}
+
+h3 {
+	margin: 10px;
+}

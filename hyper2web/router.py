@@ -1,5 +1,3 @@
-import os
-
 from .abstract import AbstractRouter
 from .http import HTTP, Stream
 
@@ -43,7 +41,7 @@ class Router(AbstractRouter):
 		# '/something/xxx/' to 'something/xxx'. Get rid of '/' at the left and the right end of a string
 		route = route.lstrip('/').rstrip('/').split('/')
 		path = path.lstrip('/').rstrip('/').split('/')
-		print(route, path)
+
 		if len(route) != len(path):
 			return False, None
 		else:
@@ -58,13 +56,10 @@ class Router(AbstractRouter):
 					parameters[r[1:-1]] = p
 				elif r != p:
 					return False, None
-			print('out of for loop')
 			return True, parameters
 
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):
-		print('app.App.handle_route')
-
 		path = stream.headers[':path']
 		method = stream.headers[':method']
 
@@ -73,7 +68,6 @@ class Router(AbstractRouter):
 		# 如果没有任何匹配，就默认为静态文件读取
 		if route is None:
 			if method == 'GET':
-				print('GET')
 				handler = self.default_get
 			else:
 				handler = None
@@ -81,8 +75,6 @@ class Router(AbstractRouter):
 			handler = self._routes[method].get(route, None)
 
 		if handler is not None:
-			print('handle')
-			print(handler)
 			await handler(http, stream, parameters)
 		else:
 			# maybe raise an error?

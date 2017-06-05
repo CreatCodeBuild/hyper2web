@@ -123,7 +123,6 @@ class HTTP(AbstractHTTP):
 		"""
 		if event.stream_id not in self.streams:
 			# But I think this situation is impossible since header should always arrive before data
-			print('data before header')
 			raise Exception('data before header')
 
 		# update this handler
@@ -161,7 +160,6 @@ class HTTP(AbstractHTTP):
 		"""Send data associate with this stream to client and end the stream"""
 		# Headers
 		content_type, content_encoding = mimetypes.guess_type(str(data, encoding='utf8'))
-		print(content_type, content_encoding)
 		response_headers = [
 			(':status', '200'),
 			('content-length', str(len(data))),

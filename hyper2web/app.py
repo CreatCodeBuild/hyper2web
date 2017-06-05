@@ -29,7 +29,6 @@ class App(AbstractApp):
 
 		if auto_serve_static_file:
 			async def default_get(http, stream, parameters):
-				print('default_get')
 				route = stream.headers[':path'].lstrip('/')
 				full_path = os.path.join(self.root, route)
 				if os.path.exists(full_path):
@@ -52,7 +51,8 @@ class App(AbstractApp):
 		kernel.run(h2_server(address=("localhost", self.port),
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
-							 app=self))
+							 app=self),
+				   shutdown=True)
 
 	def get(self, route: str, handler):
 		self._router.register('GET', route, handler)

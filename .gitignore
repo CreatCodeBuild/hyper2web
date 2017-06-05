@@ -1,7 +1,8 @@
 # common
 .idea/
 *.pyc
-example/
+/example/*
+/example/game/game_record.json
 .cache/
 __pycache__/
 
@@ -9,3 +10,4 @@ __pycache__/
 build/
 dist/
 *.egg-info
+!/example/game

@@ -203,15 +203,15 @@ const Game = (function() {
                     electron: [2,5]
                 },
                 {
-                    name: 'Carbon',
+                    name: 'Oxygen',
                     electron: [2,6]
                 },
                 {
-                    name: 'Nitrogen',
+                    name: 'Fluorine',
                     electron: [2,7]
                 },
                 {
-                    name: 'Nitrogen',
+                    name: 'Neon',
                     electron: [2,8]
                 }
             ];
@@ -295,7 +295,9 @@ const Game = (function() {
             createjs.Ticker.addEventListener("tick", Animator.stage);
 
             // set up timer
-            this.levels[this.currentLevel].startTime = Date.now()
+            this.levels[this.currentLevel].startTime = Date.now();
+            // get top10 of this level from server
+            Service.get_top10(this.currentLevel)
         },
 
         goToNextLevel: function() {
@@ -307,7 +309,7 @@ const Game = (function() {
                 //finished the game
                 createjs.Ticker.removeAllEventListeners();
                 createjs.Tween.removeAllTweens();
-                let text = new createjs.Text("Congradulations! Last Level 达成！", "40px Arial", "000000");
+                let text = new createjs.Text("Congratulations! Last Level 达成！", "40px Arial", "000000");
                 text.x = 140;
                 text.y = 200;
                 text.textBaseline = "alphabetic";

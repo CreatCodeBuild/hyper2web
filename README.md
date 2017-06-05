@@ -1,11 +1,9 @@
 # Super Fast HTTP2 Framework for Progressive Web Application
 
 # Installation
-Clone this project to your local directory. In this directory, 
-```
-python setup.py
-```
-This will automatically install `hyper2web` to the associated Python as a site-package.
+At this point, the best way to install it is probably download the zip and extract it to your projects' directory.
+
+I have not figured out how to make it installable with `pip` yet.
 
 I will make it available on PyPi once I have the first release.
 
@@ -55,6 +53,9 @@ That's it! If you just want to serve static files, it's just 2 lines!
 from hyper2web import app
 app.App(port=5000).up()
 ```
+
+# Example
+See the example folders for examples.
 
 # Test
 Python modules/packages and imports are confusing. You have to do

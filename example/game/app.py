@@ -6,7 +6,7 @@ from hyper2web import app
 from game import update_record, game_record, game_record_path
 
 
-app = app.App()
+app = app.App(address="0.0.0.0", port=443)
 # should raise an error if no response method is called
 # should raise an error if response method is not called with await
 async def post_record(http, stream, para):

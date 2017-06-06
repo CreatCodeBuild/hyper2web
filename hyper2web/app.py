@@ -11,7 +11,7 @@ h2_server = server.h2_server
 
 
 class App(AbstractApp):
-	def __init__(self, port=5000, root='./public',
+	def __init__(self, address="0.0.0.0", port=5000, root='./public',
 				 auto_serve_static_file=True,
 				 default_file='index.html', router=Router):
 		"""
@@ -22,6 +22,7 @@ class App(AbstractApp):
 		:param router: the router class to use
 		"""
 		self.port = port
+		self.address = address
 		self.root = os.path.abspath(root)
 
 		# todo: implement static_file_handle and root_route
@@ -48,7 +49,7 @@ class App(AbstractApp):
 
 	def up(self):
 		kernel = Kernel()
-		kernel.run(h2_server(address=("localhost", self.port),
+		kernel.run(h2_server(address=(self.address, self.port),
 							 certfile="{}.crt.pem".format("localhost"),
 							 keyfile="{}.key".format("localhost"),
 							 app=self),

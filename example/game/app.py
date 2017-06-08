@@ -9,10 +9,10 @@ from game import update_record, game_record, game_record_path
 app = app.App(address="0.0.0.0", port=5000)
 # should raise an error if no response method is called
 # should raise an error if response method is not called with await
-async def post_record(http, stream, para, response):
-	record = json.loads(str(stream.data, encoding='utf8'))
+async def post_record(request, response):
+	record = json.loads(str(request.stream.data, encoding='utf8'))
 	update_record(record, game_record)
-	await http.send_error(stream, 200)
+	await response.send_status_code(200)
 
 	# write records to disk
 	async with aopen(game_record_path, mode='w') as f:

@@ -34,11 +34,11 @@ if __name__ == '__main__':
 
 	# A basic callback style API is provided
 	# The naming of this function is up to you
-	async def post_echo(http, stream):
+	async def post_echo(request, response):
 		# this route essentially echo the data received back to client
 		print('data received:')
 		print(str(stream.data, encoding='utf8'))
-		await http.send_and_end(stream, stream.data)
+		await response.send(request.stream.data)
 
 	app = app.App(port=5000)
 	app.post('name', post_echo)

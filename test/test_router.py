@@ -2,7 +2,7 @@ import unittest
 
 from curio import Kernel
 
-from hyper2web.http import Stream
+from hyper2web.http import Stream, Request, Response
 from hyper2web.router import Router
 
 
@@ -12,7 +12,7 @@ class TestRouter(unittest.TestCase):
 
 	def test_raise_error_on_non_existing_route(self):
 		"""If a route doesn't exist, should raise error"""
-		router = Router(None, None)
+		router = Router(None)
 		stream = Stream(1, {':path': 'x', ':method': 'GET'})
 
 		# should raise a more specific error in the future
@@ -21,25 +21,28 @@ class TestRouter(unittest.TestCase):
 			k.run(coroutine)
 
 	def test_get_existing_route(self):
-		router = Router(None, None)
-		stream = Stream(1, {':path': 'x', ':method': 'GET'})
+		router = Router(None)
 
-		async def f(http, stream):
-			assert http is None
-			assert stream.headers[':path'] == 'x'
-		router.get('x', f)
+		async def f(req, res):
+			assert req.stream.headers[':path'] == 'x'
+			assert res.http is None
+		router.register('GET', route='x', handler=f)
+
+		stream = Stream(1, {':path': 'x', ':method': 'GET'})
 		coroutine = router.handle_route(None, stream)
 		k.run(coroutine)
 
 	def test_post_existing_route(self):
-		router = Router(None, None)
-		stream = Stream(1, {':path': 'x', ':method': 'POST'})
+		router = Router(None)
 
-		async def f(http, stream):
-			assert http is None
-			assert stream.headers[':path'] == 'x'
-		router.post('x', f)
+		async def f(req, res):
+			assert res.http is None
+			assert req.stream.headers[':path'] == 'x'
+		router.register('POST', route='x', handler=f)
+
+		stream = Stream(1, {':path': 'x', ':method': 'POST'})
 		coroutine = router.handle_route(None, stream)
+
 		k.run(coroutine)
 
 	def test_match(self):
@@ -54,13 +57,15 @@ class TestRouter(unittest.TestCase):
 		self.assertFalse(matched)
 
 	def test_parameterized_route(self):
-		router = Router(None, None)
-		async def f(http, stream, parameters):
-			self.assertIsNone(http)
-			self.assertEqual(parameters['userId'], '123')
-			self.assertEqual(parameters['name'], 'John')
-		router.get('user/{userId}/name/{name}', f)
-		c = router.handle_route(None, Stream(1, {':path': 'user/123/name/John', ':method': 'GET'}))
+		router = Router(None)
+		async def f(req, res):
+			self.assertIsNone(res.http)
+			self.assertEqual(req.para['userId'], '123')
+			self.assertEqual(req.para['name'], 'John')
+		router.register('GET', route='user/{userId}/name/{name}', handler=f)
+
+		stream = Stream(1, {':path': 'user/123/name/John', ':method': 'GET'})
+		c = router.handle_route(None, stream)
 		k.run(c)
 
 	# will want to test with unicode

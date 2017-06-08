@@ -10,6 +10,26 @@ AbstractApp = abstract.AbstractApp
 h2_server = server.h2_server
 
 
+def default_get(app):
+	async def f(request, response):
+		route = request.stream.headers[':path'].lstrip('/')
+		full_path = os.path.join(app.root, route)
+		if os.path.exists(full_path):
+			await response.send_file(full_path)
+			# await http.send_file(stream, full_path)
+		else:
+			await response.send_status_code(404)
+			# await http.send_error(stream, 404)
+	return f
+
+
+def get_index(app):
+	async def f(request, response):
+		await response.send_file(os.path.join(app.root, app.default_file))
+		# await http.send_file(stream, os.path.join(app.root, app.default_file))
+	return f
+
+
 class App(AbstractApp):
 	def __init__(self, address="0.0.0.0", port=5000, root='./public',
 				 auto_serve_static_file=True,
@@ -29,23 +49,13 @@ class App(AbstractApp):
 		self.default_file = default_file
 
 		if auto_serve_static_file:
-			async def default_get(http, stream, parameters):
-				route = stream.headers[':path'].lstrip('/')
-				full_path = os.path.join(self.root, route)
-				if os.path.exists(full_path):
-					await http.send_file(stream, full_path)
-				else:
-					await http.send_error(stream, 404)
-
-			self._router = router(default_get)
+			self._router = router(default_get(self))
 		else:
 			self._router = router(None)
 
 		# will server this file on GET '/'
 		if default_file:
-			async def get_index(http, stream, para):
-				await http.send_file(stream, os.path.join(self.root, self.default_file))
-			self.get('/', get_index)
+			self.get('/', get_index(self))
 
 	def up(self):
 		kernel = Kernel()

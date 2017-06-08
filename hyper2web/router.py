@@ -1,5 +1,5 @@
 from .abstract import AbstractRouter
-from .http import HTTP, Stream
+from .http import HTTP, Stream, Request, Response
 
 
 class Router(AbstractRouter):
@@ -75,7 +75,8 @@ class Router(AbstractRouter):
 			handler = self._routes[method].get(route, None)
 
 		if handler is not None:
-			await handler(http, stream, parameters)
+			req = Request(stream, parameters)
+			res = Response(stream.stream_id, http)
+			await handler(req, res)
 		else:
-			# maybe raise an error?
 			raise Exception(path, 'is not a valid request path')

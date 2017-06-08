@@ -6,8 +6,12 @@
 .cache/
 __pycache__/
 
-# package
+!/example/game
+
+# build & dist
 build/
 dist/
 *.egg-info
-!/example/game
+
+# log
+.tox/

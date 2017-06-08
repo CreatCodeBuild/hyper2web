@@ -1,11 +1,55 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from setuptools import setup
 
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
+
+requirements = [
+    'Click>=6.0',
+    # TODO: put package requirements here
+    'h2',
+    'curio'
+]
+
+test_requirements = [
+    # TODO: put package test requirements here
+    'pytest'
+]
+
 setup(
-	name="hyper2web",
-	version="0.0.0",
-	description="Super Fast H2 Backend Framework for Progressive Web App",
-	url="https://github.com/CreatCodeBuild/hyper2web",
-	author="CreatCodeBuild@github.com",
-	package=['hyper2web'],
-	install_requires=['h2', 'curio']
+    name='hyper2web',
+    version='0.0.1',
+    description="Coroutine based H2 Web backend framework built for the future.",
+    long_description=readme + '\n\n' + history,
+    author="Xuanzhe Wang",
+    author_email='wangxuanzhealbert@gmail.com',
+    url='https://github.com/CreatCodeBuild/hyper2web',
+    packages=[
+        'hyper2web',
+    ],
+    package_dir={'hyper2web':
+                 'hyper2web'},
+    entry_points={
+        'console_scripts': [
+            'hyper2web=hyper2web.cli:main'
+        ]
+    },
+    include_package_data=True,
+    install_requires=requirements,
+    zip_safe=False,
+    keywords='hyper2web',
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers',
+        'Natural Language :: English',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+    ],
+    test_suite='tests',
+    tests_require=test_requirements
 )

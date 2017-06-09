@@ -1,11 +1,9 @@
 # Super Fast HTTP2 Framework for Progressive Web Application
 
 # Installation
-At this point, the best way to install it is probably download the zip and extract it to your projects' directory.
-
-I have not figured out how to make it installable with `pip` yet.
-
-I will make it available on PyPi once I have the first release.
+```
+pip install hyper2web
+```
 
 ## Python Version
 Python3.5+

@@ -31,6 +31,8 @@ async def get_top10(request, response):
 	response.set_header('content-length', str(len(string)))
 	response.set_header('Access-Control-Allow-Origin', '*')
 	await response.send(bytes(string, encoding='utf8'))
+
 app.get('/get_top10/{levelIndex}', get_top10)
+
 
 app.up()

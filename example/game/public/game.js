@@ -330,7 +330,7 @@ const Game = (function() {
                 Service.post_record({
                     level: this.currentLevel,
                     timeUsed: timeUsed,
-                    user: "Master"
+                    user: UserName
                 });
                 Game.goToNextLevel();
             }

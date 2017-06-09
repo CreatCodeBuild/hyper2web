@@ -177,7 +177,8 @@ class HTTP(AbstractHTTP):
 			await self.sock.sendall(self.connection.data_to_send())
 
 		else:
-			# print('HTTP.send ', headers)
+			print('HTTP.send ', headers)
+
 			self.connection.send_headers(stream_id, headers, end_stream=False)
 			# print('HTTP.send headers')
 			await self.sock.sendall(self.connection.data_to_send())
@@ -218,7 +219,13 @@ class Request(AbstractRequest):
 
 class Response(AbstractResponse):
 	def __init__(self, stream_id: int, http: HTTP):
-		super().__init__(stream_id, http)
+		self.stream_id = stream_id
+		self.http = http
+		self.headers = {
+			':status': '200',
+			'content-length': '0',  # 不知用户是否应该自己计算这个
+			'server': 'hyper2web'
+		}
 
 	def set_header(self, field, value):
 		self.headers[field] = value

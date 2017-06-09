@@ -13,7 +13,6 @@ import pytest
 from contextlib import contextmanager
 from click.testing import CliRunner
 
-from hyper2web import hyper2web
 from hyper2web import cli
 
 

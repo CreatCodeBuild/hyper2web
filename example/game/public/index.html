@@ -16,8 +16,8 @@
 <body>
 	<canvas id='game_canvas' width='800' height='600'></canvas>
 
-    <div id="天地英雄榜">
-        <h3>天地英雄榜</h3>
+    <div id="game_rank">
+        <h3>Master Rank 大师榜</h3>
         <ul>
           <li v-for="(item, index) in top10">
             {{index+1}}: {{ item.user }}, {{item.timeUsed}} 毫秒
@@ -35,6 +35,13 @@
         <a target="_blank" href="https://github.com/CreatCodeBuild/hyper2web">Hyper2Web</a>
         , an enjoyable Python web framework written by me.
     </div>
+
+    <div id="ask_user_name">
+        <h4>Before start the game, please pickup a nickname</h4>
+        <input v-model="user_input" type="text" name="Your Name" placeholder="Your Name">
+        <button v-on:click="confirm">Confirm</button>
+    </div>
+
 </body>
 <script src="index.js"></script>
 </html>

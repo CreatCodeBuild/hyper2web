@@ -1,12 +1,35 @@
+body {
+	text-align: center;
+}
+
 #about_this_app {
+	/* itself */
 	position: fixed;
 	bottom: 0;
 	width: 100%;
+	/* content */
 	text-align: center;
 }
 
 #game_canvas {
 	border:solid 1px black;
+}
+
+#game_rank ul {
+	display: inline-block;
+}
+
+#ask_user_name {
+	/* itself */
+	position: fixed;
+	width: 500px;
+	height: 200px;
+	top: 50%;
+	left: 50%;
+	margin-top: -100px;
+	margin-left: -250px;
+	/* content */
+	text-align: center;
 }
 
 h3 {

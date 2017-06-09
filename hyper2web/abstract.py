@@ -53,15 +53,6 @@ class AbstractResponse:
     
     All send methods should call HTTP's send method
     """
-    def __init__(self, stream_id: int, http: AbstractHTTP):
-        self.stream_id = stream_id
-        self.http = http
-        self.headers = {
-            ':status': '200',
-            'content-length': '0',  # 不知用户是否应该自己计算这个
-            'server': 'hyper2web'
-        }
-
     async def send(self, data: bytes):
         """
         send this response.

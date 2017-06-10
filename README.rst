@@ -5,9 +5,6 @@ Super Fast HTTP2 Framework for Progressive Web Application
 Installation
 ############
 
-Stable release
---------------
-
 To install Hyper2Web, run this command in your terminal:
 
 .. code-block:: console
@@ -68,7 +65,7 @@ Then run this script
 
 .. code-block:: console
 
-	python app.py
+	$ python app.py
 
 That's it!
 
@@ -80,6 +77,12 @@ If you just want to serve static files, it's just 2 lines!
 	app.App(port=5000).up()
 
 
+Docs
+####
+Documentation is hosted on hyper2web.readthedocs.io_.
+
+.. _hyper2web.readthedocs.io: http://hyper2web.readthedocs.io
+
 Example
 #######
 
@@ -88,13 +91,11 @@ See the example folders for examples.
 Test
 ####
 
-run
-
 .. code-block:: console
 
 	$ python -m unittest discover test
 
-to run all tests under ``test/`` dir.
+Run all tests under ``test/`` dir.
 
 
 Misc

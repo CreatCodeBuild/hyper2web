@@ -6,9 +6,11 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   readme
    installation
-   usage
+   tutorials
+   how-to
+   API references
+   discussion
    contributing
    authors
    history

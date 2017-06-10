@@ -45,7 +45,9 @@ Assuming you have a directory structure like::
 	  ...
 	--app.py
 
-Your ``app.py`` looks like::
+Your ``app.py`` looks like
+
+.. code-block:: python
 	from hyper2web import app
 
 	if __name__ == '__main__':
@@ -60,13 +62,16 @@ Your ``app.py`` looks like::
 		app.post('name', post_echo)
 		app.up()
 
-Then run this script::
+
+Then run this script
+.. code-block:: console
 	python app.py
 
 That's it!
 
-If you just want to serve static files, it's just 2 lines!::
+If you just want to serve static files, it's just 2 lines!
 
+.. code-block:: python
 	from hyper2web import app
 	app.App(port=5000).up()
 
@@ -79,10 +84,12 @@ See the example folders for examples.
 Test
 ####
 
-run::
+run
+
+.. code-block:: console
 	python -m unittest discover test
 
-to run all tests under `test/` dir.
+to run all tests under ``test/`` dir.
 
 
 Misc

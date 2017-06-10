@@ -71,11 +71,11 @@ If you just want to serve static files, it's just 2 lines!::
 
 
 Example
--------
+#######
 See the example folders for examples.
 
 Test
-----
+####
 run::
 	python -m unittest discover test
 
@@ -83,7 +83,7 @@ to run all tests under `test/` dir.
 
 
 Misc
-----
+####
 Why did I create this framework?
 ********************************
 April 23rd, 2017, Sunday, I woke up and felt bored and decided to create my own HTTP2 web framework.

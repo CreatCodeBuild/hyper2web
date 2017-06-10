@@ -48,6 +48,7 @@ Assuming you have a directory structure like::
 Your ``app.py`` looks like
 
 .. code-block:: python
+
 	from hyper2web import app
 
 	if __name__ == '__main__':
@@ -64,7 +65,9 @@ Your ``app.py`` looks like
 
 
 Then run this script
+
 .. code-block:: console
+
 	python app.py
 
 That's it!
@@ -72,6 +75,7 @@ That's it!
 If you just want to serve static files, it's just 2 lines!
 
 .. code-block:: python
+
 	from hyper2web import app
 	app.App(port=5000).up()
 
@@ -87,7 +91,8 @@ Test
 run
 
 .. code-block:: console
-	python -m unittest discover test
+
+	$ python -m unittest discover test
 
 to run all tests under ``test/`` dir.
 

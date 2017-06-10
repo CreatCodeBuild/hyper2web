@@ -1,18 +1,34 @@
-# Super Fast HTTP2 Framework for Progressive Web Application
+==========================================================
+Super Fast HTTP2 Framework for Progressive Web Application
+==========================================================
 
-# Installation
-```
-pip install hyper2web
-```
+Installation
+############
 
-## Python Version
-Python3.5+
+Stable release
+--------------
 
-## Dependency
-This project uses `h2` and `curio`.
+To install Hyper2Web, run this command in your terminal:
 
-[h2 Github](https://github.com/python-hyper/hyper-h2) [doc](https://python-hyper.org/h2/en/stable/)
-[curio Github](https://github.com/dabeaz/curio) [doc](https://curio.readthedocs.io/en/latest/)
+.. code-block:: console
+
+    $ pip install hyper2web
+
+This is the preferred method to install Hyper2Web, as it will always install the most recent stable release.
+
+If you don't have `pip`_ installed, this `Python installation guide`_ can guide
+you through the process.
+
+.. _pip: https://pip.pypa.io
+.. _Python installation guide: http://docs.python-guide.org/en/latest/starting/installation/
+
+
+Dependency
+##########
+Python3.6
+h2
+curio
+
 
 # How to
 Assuming you have a directory structure like

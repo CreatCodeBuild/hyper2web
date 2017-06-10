@@ -45,7 +45,7 @@ Assuming you have a directory structure like::
 	  ...
 	--app.py
 
-Your `app.py` looks like::
+Your ``app.py`` looks like::
 	from hyper2web import app
 
 	if __name__ == '__main__':

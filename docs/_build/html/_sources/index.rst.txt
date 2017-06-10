@@ -7,7 +7,10 @@ Contents:
    :maxdepth: 2
 
    installation
-   usage
+   tutorials
+   how-to
+   API references
+   discussion
    contributing
    authors
    history

@@ -4,6 +4,6 @@ API References
 
 app
 ---
-.. autoclass:: app.App
+.. autoclass:: hyper2web.app.App
    :members:
    :undoc-members:

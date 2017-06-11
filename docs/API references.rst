@@ -2,8 +2,7 @@
 API References
 ==============
 
-app
----
-.. autoclass:: hyper2web.app.App
-   :members:
-   :undoc-members:
+.. toctree::
+   :maxdepth: 4
+
+   hyper2web

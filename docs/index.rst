@@ -11,7 +11,6 @@ Contents:
    tutorials
    how-to
    API references
-   modules
    discussion
    contributing
    authors

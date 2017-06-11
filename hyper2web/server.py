@@ -1,9 +1,4 @@
-#!/usr/bin/env python3.5
-# -*- coding: utf-8 -*-
 """
-server.py
-~~~~~~~~~~~~~~~
-
 A fully-functional HTTP/2 server written for curio.
 
 Requires Python 3.5+.

@@ -31,6 +31,9 @@ def get_index(app):
 
 
 class App(AbstractApp):
+	"""
+	This class is the main class which users should be interact with.
+	"""
 	def __init__(self, address="0.0.0.0", port=5000, root='./public',
 				 auto_serve_static_file=True,
 				 default_file='index.html', router=Router):

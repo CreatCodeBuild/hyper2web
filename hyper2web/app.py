@@ -96,12 +96,18 @@ class App(AbstractApp):
 	def get(self, route: str, handler):
 		"""
 		Register a GET handler.
+		
 		:param route: A string which represent a RESTful route with optional parameters
-			/path/<parameter name>/...		
+		
+			.. code-block:: python
+				"/path/<parameter name>/..."		
+		
 		:param handler: A handler function. Has to be async.
-			async def handler(request, response):
-				...do something...
-				response.send(...)
+			
+			.. code-block:: python
+				async def handler(request, response):
+					...do something...
+					response.send(...)
 		"""
 		self._router.register('GET', route, handler)
 

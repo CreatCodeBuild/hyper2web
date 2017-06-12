@@ -11,15 +11,15 @@ h2_server = server.h2_server
 
 
 def default_get(app):
+	"""
+	This function is the default handler for GET request whose :path is registered in the router.
+	To be more clear, a user does not have to register GET /index.html or GET /any_static_file.xxx.
+	Any :path which is not found in the router will initiate this method.
+
+	This method treats all requests as a GET /static_file. 
+	If :path is not a existing file path, it returns status code 404.
+	"""
 	async def f(request, response):
-		"""
-		This function is the default handler for GET request whose :path is registered in the router.
-		To be more clear, a user does not have to register GET /index.html or GET /any_static_file.xxx.
-		Any :path which is not found in the router will initiate this method.
-		
-		This method treats all requests as a GET /static_file. 
-		If :path is not a existing file path, it returns status code 404.
-		"""
 		route = request.stream.headers[':path'].lstrip('/')
 		full_path = os.path.join(app.root, route)
 		if os.path.exists(full_path):
@@ -32,13 +32,13 @@ def default_get(app):
 
 
 def get_index(app):
+	"""
+	The default handler for GET /
+	The default behavior for GET / is GET /index.html.
+	If user specifies a default_file in the constructor of App,
+	the behavior becomes GET /default_file
+	"""
 	async def f(request, response):
-		"""
-		The default handler for GET /
-		The default behavior for GET / is GET /index.html.
-		If user specifies a default_file in the constructor of App,
-		the behavior becomes GET /default_file
-		"""
 		await response.send_file(os.path.join(app.root, app.default_file))
 		# await http.send_file(stream, os.path.join(app.root, app.default_file))
 	return f

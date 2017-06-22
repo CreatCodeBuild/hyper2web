@@ -50,6 +50,6 @@ Now open your browser and go to :code:`https://localhost:5000`. You should be ab
 
 Congratulations! Now our server is running. The next chapter will teach you some basic RESTful routing.
 
-=========
+
 Chapter 2: REST
-=========
+---------------

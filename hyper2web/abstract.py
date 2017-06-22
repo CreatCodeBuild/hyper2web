@@ -1,10 +1,15 @@
 """
-Define All Abstract Types in this module
+This module defines all Abstract Types in the framework.
 Mainly for Better Organization of Code and For Better IDE Type Inferences
 """
 
 
 class AbstractApp:
+    """
+    This class is the base class of any App classes. The framework provides an `App` class which implements all methods of this class.
+    
+    A user can also implement this class if the user find that the `App` class is insufficient. But, the creator recommends user to extend `App` class instead of `AbstractApp` class.
+    """
     def up(self):
         raise NotImplementedError
 
@@ -15,6 +20,9 @@ class AbstractApp:
         raise NotImplementedError
 
     async def handle_route(self, http, stream):
+        """
+        This function has to be async.
+        """
         raise NotImplementedError
 
 
@@ -27,6 +35,11 @@ class AbstractRouter:
 
 
 class AbstractHTTP:
+    """
+    The `HTTP` class implements this class.
+    
+    All methods declared here are async.
+    """
     async def handle_event(self, event):
         raise NotImplementedError
 

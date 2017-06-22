@@ -46,4 +46,6 @@ Now, let's start the server. Open your terminal under :code:`Game` directory and
 
     $ python app.py
     
-continue...
+Now open your browser and go to :code:`https://localhost:5000`. You should be able to see the webpage you just wrote.
+
+Congratulations! Now our server is running. The next chapter will teach you some basic RESTful routing.

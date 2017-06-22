@@ -2,6 +2,9 @@
 Tutorials
 =========
 
+Chapter 1: Set Up the Server
+============================
+
 In this tutorial, we will create a simple HTML5 game together. The game will teach you most aspects of our framework. Also, we will be writing both frontend and backend.
 
 Our framework works on both Linux and Windows systems. I will use Unix/Linux conventions/terms in this tutorial.
@@ -53,3 +56,9 @@ Congratulations! Now our server is running. The next chapter will teach you some
 
 Chapter 2: REST
 ===============
+
+Chapter 3: Parameterized REST
+=============================
+
+Chapter 4: Persistent Storage
+=============================

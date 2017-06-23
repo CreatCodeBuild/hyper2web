@@ -2,13 +2,19 @@ import unittest
 
 from curio import Kernel
 
-from hyper2web.http import Stream, Request, Response
+from hyper2web.http import Stream
 from hyper2web.router import Router
 
 
-k = Kernel()
-
 class TestRouter(unittest.TestCase):
+
+	def setUp(self):
+		self.k = Kernel()
+
+	def tearDown(self):
+		async def f():
+			return
+		self.k.run(f, shutdown=True)
 
 	def test_raise_error_on_non_existing_route(self):
 		"""If a route doesn't exist, should raise error"""
@@ -18,7 +24,7 @@ class TestRouter(unittest.TestCase):
 		# should raise a more specific error in the future
 		with self.assertRaises(Exception):
 			coroutine = router.handle_route(None, stream)
-			k.run(coroutine)
+			self.run(coroutine)
 
 	def test_get_existing_route(self):
 		router = Router(None)
@@ -30,7 +36,7 @@ class TestRouter(unittest.TestCase):
 
 		stream = Stream(1, {':path': 'x', ':method': 'GET'})
 		coroutine = router.handle_route(None, stream)
-		k.run(coroutine)
+		self.k.run(coroutine)
 
 	def test_post_existing_route(self):
 		router = Router(None)
@@ -43,7 +49,7 @@ class TestRouter(unittest.TestCase):
 		stream = Stream(1, {':path': 'x', ':method': 'POST'})
 		coroutine = router.handle_route(None, stream)
 
-		k.run(coroutine)
+		self.k.run(coroutine)
 
 	def test_match(self):
 		# match true
@@ -66,6 +72,6 @@ class TestRouter(unittest.TestCase):
 
 		stream = Stream(1, {':path': 'user/123/name/John', ':method': 'GET'})
 		c = router.handle_route(None, stream)
-		k.run(c)
+		self.k.run(c)
 
 	# will want to test with unicode

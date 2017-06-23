@@ -59,7 +59,7 @@ Congratulations! Now our server is running. The next chapter will teach you some
 
 Chapter 2: Static File Server
 =============================
-    Although you might want your App to be as dynamic as possible, you have to first understand how a static website is served.
+Although you might want your App to be as dynamic as possible, you have to first understand how a static website is served.
 
 Chapter 3: REST
 ===============

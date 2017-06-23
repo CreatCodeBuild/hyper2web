@@ -11,6 +11,15 @@ h2_server = server.h2_server
 
 
 def default_get(app):
+	"""
+	This function is the default handler for GET request whose :path is registered in the router.
+	
+	To be more clear, a user does not have to register GET /index.html or GET /any_static_file.xxx. Any :path which is not found in the router will initiate this method.
+
+	This method treats all requests as a GET /static_file. If :path is not a existing file path, it returns status code 404.
+	
+	Users should not use this function.
+	"""
 	async def f(request, response):
 		route = request.stream.headers[':path'].lstrip('/')
 		full_path = os.path.join(app.root, route)
@@ -24,6 +33,15 @@ def default_get(app):
 
 
 def get_index(app):
+	"""
+	The default handler for GET /.
+	
+	The default behavior for GET / is GET /index.html.
+	
+	If a user specifies a default_file in the constructor of App, the behavior becomes GET /default_file
+	
+	Users should not use this function.
+	"""
 	async def f(request, response):
 		await response.send_file(os.path.join(app.root, app.default_file))
 		# await http.send_file(stream, os.path.join(app.root, app.default_file))
@@ -33,6 +51,8 @@ def get_index(app):
 class App(AbstractApp):
 	"""
 	This class is the main class which users should be interact with.
+	
+	This is the only class which users should construct.
 	"""
 	def __init__(self, address="0.0.0.0", port=5000, root='./public',
 				 auto_serve_static_file=True,
@@ -61,6 +81,11 @@ class App(AbstractApp):
 			self.get('/', get_index(self))
 
 	def up(self):
+		"""
+		Start the server. This is the last function users should call.
+		
+		Users only call this function after set up all routing handlers.
+		"""
 		kernel = Kernel()
 		kernel.run(h2_server(address=(self.address, self.port),
 							 certfile="{}.crt.pem".format("localhost"),
@@ -69,11 +94,34 @@ class App(AbstractApp):
 				   shutdown=True)
 
 	def get(self, route: str, handler):
+		"""
+		Register a GET handler.
+		
+		:param route: A string which represent a RESTful route with optional parameters
+		
+			.. code-block:: python
+				"/path/<parameter name>/..."		
+		
+		:param handler: A handler function. Has to be async.
+			
+			.. code-block:: python
+				async def handler(request, response):
+					...do something...
+					response.send(...)
+		"""
 		self._router.register('GET', route, handler)
 
 	def post(self, route: str, handler):
+		"""
+		The same as self.get except that it's for POST
+		"""
 		self._router.register('POST', route, handler)
 
 	# async
 	async def handle_route(self, http: HTTP, stream: Stream):
+		"""
+		When the framework gets a incoming request, handle this request to corresponding routing handler.
+		
+		Only used by the framework. Users should never call it.
+		"""
 		await self._router.handle_route(http, stream)

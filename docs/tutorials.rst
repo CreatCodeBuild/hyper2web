@@ -5,7 +5,7 @@ Tutorials
 Chapter 1: Set Up the Server
 ============================
 
-In this tutorial, we will create a simple HTML5 game together. The game will teach you most aspects of our framework. Also, we will be writing both frontend and backend.
+In this tutorial, we will create a simple HTML5 game together. The game will teach you most aspects of our framework. We will only focus on backend. Frontend code will be provided.
 
 Our framework works on both Linux and Windows systems. I will use Unix/Linux conventions/terms in this tutorial.
 
@@ -43,6 +43,9 @@ Next, let's write the frontend. Create a :code:`index.html` file in :code:`./pub
     </body>
     </html>
     
+As you might know, Hyper2Web only uses HTTP/2. H2 uses HTTPS by default. Therefore, you need to have a pair of ssl keys in your top level directory. You can either generator your own keys or copy the key files in the `example 
+<https://github.com/CreatCodeBuild/hyper2web/tree/master/example/game>`_. Copy and paste files with the name :code:`localhost.*` to your :code:`Game` directory.
+
 Now, let's start the server. Open your terminal under :code:`Game` directory and type
 
 .. code-block:: console

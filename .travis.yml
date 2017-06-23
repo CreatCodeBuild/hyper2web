@@ -1,1 +1,11 @@
-language: python3.6
+language: python
+
+python:
+  - "3.6"
+
+# command to install dependencies
+install:
+  - pip install .
+
+# command to run tests
+script: python -m unittest discover test

@@ -12,4 +12,4 @@ install:
 # command to run tests
 script:
   - coverage run -m unittest discover test
-  - coverage report -m
+  - coverage report --include */hyper2web/*

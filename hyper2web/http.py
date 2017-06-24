@@ -4,8 +4,7 @@ This module implements HTTP methods for end user
 I currently think that they should be synchronized since they should not do IO
 Where as endpoint module is designed for IO
 """
-import mimetypes
-import os
+from collections import OrderedDict
 
 from curio import spawn, Event, aopen
 
@@ -221,11 +220,11 @@ class Response(AbstractResponse):
 	def __init__(self, stream_id: int, http: HTTP):
 		self.stream_id = stream_id
 		self.http = http
-		self.headers = {
-			':status': '200',
-			'content-length': '0',  # 不知用户是否应该自己计算这个
-			'server': 'hyper2web'
-		}
+		self.headers = OrderedDict([
+			(':status', '200'),
+			('content-length', '0'),  # 不知用户是否应该自己计算这个
+			('server', 'hyper2web')
+		])
 
 	def set_header(self, field, value):
 		self.headers[field] = value

@@ -2,6 +2,7 @@ import unittest
 from hyper2web.http import Stream
 from h2.events import DataReceived
 
+
 class TestStream(unittest.TestCase):
 
 	def test_header_not_empty(self):

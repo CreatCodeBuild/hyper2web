@@ -57,11 +57,32 @@ Now open your browser and go to :code:`https://localhost:5000`. You should be ab
 Congratulations! Now our server is running. The next chapter will teach you some basic RESTful routing.
 
 
-Chapter 2: REST
-===============
+Chapter 2: Static File Server
+=============================
+Although you might want your App to be as dynamic as possible, you have to first understand how a static website is served.
 
-Chapter 3: Parameterized REST
+Chapter 3: REST
+===============
+Web is built on HTTP and HTTP is all about semantics. While there are thousands of ways to build HTTP API, the one which our framework embraces is REST. Since our audience's experience varies, I do not want to confuse you by explaining too much about REST. The only thing you need to know is that HTTP requests are all about semantics and a REST API is a semantic API.
+
+Let's dive into the example code and you will understand it.
+
+First, let's see the frontend code:
+
+.. code-block:: JavaScript
+
+    fetch('/top10', {method: 'GET'});
+
+:code:`fetch()` is the new browser API which does async HTTP requests. It is better than :code:`XMLHttpRequest` in almost every aspects. It has a cleaner interface which super fits REST.
+
+This line creates a HTTP GET request with :code:`:path` = :code:`/top10`. How to respond to this request is 100% up to the server. Now, in :code:`app.py`, write this piece of code:
+
+.. code-block:: Python
+
+    To be continued...
+
+Chapter 4: Parameterized REST
 =============================
 
-Chapter 4: Persistent Storage
+Chapter 5: Persistent Storage
 =============================

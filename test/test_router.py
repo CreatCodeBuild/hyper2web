@@ -17,17 +17,19 @@ class TestRouter(unittest.TestCase):
 		self.k.run(f, shutdown=True)
 
 	def test_raise_error_on_non_existing_route(self):
-		"""If a route doesn't exist, should raise error"""
+		"""
+		If a route doesn't exist and no default method is given,
+		should raise error
+		"""
 		router = Router(None)
 		stream = Stream(1, {':path': 'x', ':method': 'GET'})
 
-		# should raise a more specific error in the future
-		with self.assertRaises(RouteNotRegisteredException):
-			# todo:
-			# currently, this will cause Curio to crash,
-			# should handle this elegantly
-			coroutine = router.handle_route(None, stream)
-			self.k.run(coroutine)
+		async def f():
+			with self.assertRaises(RouteNotRegisteredException):
+				await router.handle_route(None, stream)
+
+		self.k.run(f())
+
 
 	def test_get_existing_route(self):
 		router = Router(None)

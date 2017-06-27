@@ -43,15 +43,6 @@ class AbstractHTTP:
     async def handle_event(self, event):
         raise NotImplementedError
 
-    async def send_and_end(self, stream, data):
-        raise NotImplementedError
-
-    async def send_file(self, stream, file_path):
-        raise NotImplementedError
-
-    async def send_error(self, stream, error):
-        raise NotImplementedError
-
     async def send(self, stream_id, headers, data):
         raise NotImplementedError
 

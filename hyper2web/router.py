@@ -1,4 +1,5 @@
 from .abstract import AbstractRouter
+from .exceptions import RouteNotRegisteredException
 from .http import HTTP, Stream, Request, Response
 
 
@@ -7,6 +8,9 @@ class Router(AbstractRouter):
 
 	# todo: I may want to change the constructor
 	def __init__(self, default_get):
+		"""
+		:param default_get: should be a handler function
+		"""
 		self._routes = {
 			'GET': {},
 			'POST': {}
@@ -28,12 +32,14 @@ class Router(AbstractRouter):
 		# todo: now the problem is how to implement it
 		# todo: pattern matching should be independent from :method,
 		# todo: but the current implementation doesn't support it. Should improve it later.
+
 		for routes_of_this_method in self._routes.values():
 			for route in routes_of_this_method:
 				matched, parameters = self._match(route, path)
 				# this function returns the first match, not the best match
 				if matched:
 					return route, parameters
+		# did not find any route which matches the path
 		return None, None
 
 	@classmethod
@@ -79,4 +85,4 @@ class Router(AbstractRouter):
 			res = Response(stream.stream_id, http)
 			await handler(req, res)
 		else:
-			raise Exception(path, 'is not a valid request path')
+			raise RouteNotRegisteredException(path + ' is not a registered route')

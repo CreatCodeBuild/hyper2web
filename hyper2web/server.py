@@ -4,7 +4,7 @@ A fully-functional HTTP/2 server written for curio.
 Requires Python 3.5+.
 """
 
-from curio import spawn, socket
+from curio import spawn
 
 import h2.config
 import h2.connection

@@ -29,3 +29,13 @@ let ask_user_name = new Vue({
 Service.top10_list_vue = top10_list;
 
 
+document.onclick = function(event) {
+	console.log(event.target == document.getElementById("game_canvas"));
+};
+
+window.addEventListener("keydown", function(e) {
+    // space and arrow keys
+    if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+        e.preventDefault();
+    }
+}, false);

@@ -1,7 +1,7 @@
 import unittest
 
 from hyper2web.exceptions import DifferentStreamIdException
-from hyper2web.http import Stream
+from hyper2web.http import Stream, Request, Response
 from h2.events import DataReceived
 
 
@@ -40,3 +40,19 @@ class TestStream(unittest.TestCase):
 			new_event.stream_id = 2
 			new_event.data = b''
 			stream.update(new_event)
+
+class TestRequest(unittest.TestCase):
+	pass
+
+class TestResponse(unittest.TestCase):
+	def test_header(self):
+		res = Response(None, None)
+		res.update_headers({'Some Field': 123})
+		self.assertEqual(tuple(res.headers.items()), (
+			(':status', '200'),
+			('content-length', '0'),  # 不知用户是否应该自己计算这个
+			('server', 'hyper2web'),
+			('Some Field', 123)
+		))
+
+

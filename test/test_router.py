@@ -4,7 +4,7 @@ from curio import Kernel
 
 from hyper2web.http import Stream
 from hyper2web.router import Router
-
+from hyper2web.exceptions import RouteNotRegisteredException
 
 class TestRouter(unittest.TestCase):
 
@@ -17,14 +17,19 @@ class TestRouter(unittest.TestCase):
 		self.k.run(f, shutdown=True)
 
 	def test_raise_error_on_non_existing_route(self):
-		"""If a route doesn't exist, should raise error"""
+		"""
+		If a route doesn't exist and no default method is given,
+		should raise error
+		"""
 		router = Router(None)
 		stream = Stream(1, {':path': 'x', ':method': 'GET'})
 
-		# should raise a more specific error in the future
-		with self.assertRaises(Exception):
-			coroutine = router.handle_route(None, stream)
-			self.run(coroutine)
+		async def f():
+			with self.assertRaises(RouteNotRegisteredException):
+				await router.handle_route(None, stream)
+
+		self.k.run(f())
+
 
 	def test_get_existing_route(self):
 		router = Router(None)
@@ -74,4 +79,3 @@ class TestRouter(unittest.TestCase):
 		c = router.handle_route(None, stream)
 		self.k.run(c)
 
-	# will want to test with unicode

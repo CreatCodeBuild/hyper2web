@@ -11,6 +11,7 @@ from curio import spawn, Event, aopen
 from h2 import events
 from h2.connection import H2Connection
 
+from hyper2web.exceptions import DifferentStreamIdException
 from .abstract import AbstractApp, AbstractHTTP, AbstractRequest, AbstractResponse
 
 READ_CHUNK_SIZE = 8096
@@ -50,11 +51,10 @@ class Stream:
 		if event.stream_id == self.stream_id:
 			self.buffered_data.append(event.data)
 		else:
-			raise Exception('http.Stream: Try to update a Stream on an event with different stream id')
+			raise DifferentStreamIdException()
 
 	def finalize(self):
 		"""
-		assume only POST stream will call this one
 		concat all data chunks in this handler to one bytes object
 		"""
 		if len(self.buffered_data) > 0:

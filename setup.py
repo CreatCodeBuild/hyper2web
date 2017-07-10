@@ -16,13 +16,12 @@ requirements = [
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
     'pytest'
 ]
 
 setup(
     name='hyper2web',
-    version='0.0.1',
+    version='0.0.2',
     description="Coroutine based H2 Web backend framework built for the future.",
     long_description=readme + '\n\n' + history,
     author="Xuanzhe Wang",
@@ -31,8 +30,7 @@ setup(
     packages=[
         'hyper2web',
     ],
-    package_dir={'hyper2web':
-                 'hyper2web'},
+    package_dir={'hyper2web': 'hyper2web'},
     entry_points={
         'console_scripts': [
             'hyper2web=hyper2web.cli:main'

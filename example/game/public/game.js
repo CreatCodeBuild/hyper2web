@@ -340,11 +340,19 @@ const Game = (function() {
             console.log('Game.handleCollision()');
             createjs.Ticker.removeAllEventListeners();
             createjs.Tween.removeAllTweens();
-            let text = new createjs.Text("You Died", "40px Arial", "000000");
+            let text = new createjs.Text("You Died. Hit Space to restart", "40px Arial", "000000");
             text.x = 200;
             text.y = 200;
             text.textBaseline = "alphabetic";
             Animator.stage.addChild(text);
+
+            // Ask if the user wants to restart the game
+            document.onkeydown = function(event) {
+                // if space
+                if(event.keyCode === 32) {
+                    Game.run();
+                }
+            };
         }
     };
 

@@ -35,4 +35,9 @@ async def get_top10(request, response):
 app.get('/get_top10/{levelIndex}', get_top10)
 
 
+async def another(request, response):
+	await response.send_file('./public/another.html')
+
+app.get('/another', another)
+
 app.up()

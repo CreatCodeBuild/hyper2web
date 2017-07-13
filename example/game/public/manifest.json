@@ -1,0 +1,11 @@
+{
+  "short_name": "元素大师",
+  "name": "Element Master 元素大师",
+  "start_url": "index.html",
+  "display": "standalone",
+  "icons": [{
+    "src": "img/atom.ico",
+    "sizes": "64x64",
+    "type": "image/ico"
+  }]
+}

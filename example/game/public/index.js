@@ -1,5 +1,3 @@
-let UserName = undefined;
-
 let game_ui = new Vue({
 	el: '#game_ui',
 	data: {}
@@ -17,7 +15,7 @@ let ask_user_name = new Vue({
 	},
 	methods: {
 		confirm: function(event) {
-			UserName = this.user_input
+			User.name = this.user_input;
 			this.$el.style.visibility = "hidden";
 			Game.init();
 			Game.run();
@@ -34,3 +32,17 @@ window.addEventListener("keydown", function(e) {
         e.preventDefault();
     }
 }, false);
+
+
+
+
+function detectmob() {
+	return navigator.userAgent.match(/Android/i);
+}
+
+console.log(detectmob());
+
+
+$("#app_menu button").click(function() {
+  $('#app_menu').toggleClass('app_menu-hidden');
+});

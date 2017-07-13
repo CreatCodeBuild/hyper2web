@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>元素大师</title>
-    <link rel="stylesheet" type="text/css" href="index.css">
     <!--Vue-->
     <script src="https://unpkg.com/vue"></script>
+
     <!--CreateJS-->
     <script src="https://code.createjs.com/easeljs-0.8.2.min.js"></script>
     <script src="https://code.createjs.com/tweenjs-0.6.2.min.js"></script>
+
+    <!--Google API-->
+    <meta name="google-signin-client_id" content="130764993669-orvo4sh7hkifkit0kp1rt7c8101msjcm.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+    <!--jQuery-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+
     <!--My-->
+    <meta charset="UTF-8">
+    <title>元素大师</title>
+    <link rel="icon" href="img/atom.ico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" type="text/css" href="index.css">
     <script src="service.js"></script>
+    <script src="user.js"></script>
     <script src="game.js"></script>
 </head>
 <body>
+    <div id="app_menu" class="app_menu-normal">
+		<button>Button</button>
+        <div class="g-signin2" data-onsuccess="User.onSignIn"></div>
+        <a href="#" onclick="User.signOut();">Sign out</a>
+
+        <div id="app_about">
+            This application is served by
+            <a target="_blank" href="https://github.com/CreatCodeBuild/hyper2web">Hyper2Web</a>
+            , an enjoyable Python web framework written by me.
+        </div>
+    </div>
+
 	<canvas id='game_canvas' width='800' height='600'></canvas>
 
     <div id="game_rank">
-        <h3>Master Rank 大师榜</h3>
+        <p>Master Rank 大师榜</p>
         <ul>
           <li v-for="(item, index) in top10">
             {{index+1}}: {{ item.user }}, {{item.timeUsed}} 毫秒
@@ -26,22 +50,31 @@
     </div>
 
     <div id="game_ui">
-		<h3>Use Arrow Key to control the point</h3>
-		<h3>Your Goal is to reach the center, avoiding blue electrons</h3>
+		<p>Use Arrow Key to control the point</p>
+		<p>Your Goal is to reach the center, avoiding blue electrons</p>
 	</div>
 
-    <div id="about_this_app">
-        This application is served by
-        <a target="_blank" href="https://github.com/CreatCodeBuild/hyper2web">Hyper2Web</a>
-        , an enjoyable Python web framework written by me.
-    </div>
-
     <div id="ask_user_name">
-        <h4>Before start the game, please pickup a nickname</h4>
+        <p>Before start the game, please pickup a nickname</p>
         <input v-model="user_input" type="text" name="Your Name" placeholder="Your Name">
         <button v-on:click="confirm">Confirm</button>
     </div>
 
 </body>
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase-messaging.js"></script>
+<script>
+  // Initialize Firebase
+  const config = {
+    apiKey: "AIzaSyAMBAVHInimqLFPssjvnuUybw68ZtOm1uE",
+    authDomain: "element-master-1ea62.firebaseapp.com",
+    databaseURL: "https://element-master-1ea62.firebaseio.com",
+    projectId: "element-master-1ea62",
+    storageBucket: "",
+    messagingSenderId: "479580107674"
+  };
+  firebase.initializeApp(config);
+</script>
 <script src="index.js"></script>
 </html>

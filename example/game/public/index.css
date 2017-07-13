@@ -2,14 +2,6 @@ body {
 	text-align: center;
 }
 
-#app_about {
-	/* itself */
-	position: absolute;
-	bottom: 0;
-	width: 100%;
-	/* content */
-	text-align: center;
-}
 
 #game_canvas {
 	border:solid 1px black;
@@ -32,32 +24,7 @@ body {
 	text-align: center;
 }
 
-#app_menu {
-	position: fixed;
-	height: 100%;
-	width: 400px;
-	top: 0;
-	background: white;
-	z-index: 10;
-	box-shadow: 3px 3px 3px #888888;
-	transition: left 0.4s ease;
-}
 
-.app_menu-normal {
-	left: 0;
-}
-
-.app_menu-hidden {
-	left: -403px;
-}
-
-#app_menu button {
-	position: absolute;
-	left: 400px;
-	bottom: 0;
-	height: 6em;
-	width: 12em;
-}
 
 @media screen and (max-width: 1081px) {
 	#game_canvas {

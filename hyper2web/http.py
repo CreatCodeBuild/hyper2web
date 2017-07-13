@@ -4,6 +4,7 @@ This module implements HTTP methods for end user
 I currently think that they should be synchronized since they should not do IO
 Where as endpoint module is designed for IO
 """
+import mimetypes
 from collections import OrderedDict
 
 from curio import spawn, Event, aopen
@@ -169,40 +170,37 @@ class HTTP(AbstractHTTP):
 		:param data: HTTP response body. Has to be bytes(binary data).
 		It's users' responsibility to encode any kinds of data to binary.
 		"""
-		# print('HTTP.send')
+
 		# not sure if check for None or Falsy(empty containers)
 		if data is None:
 			self.connection.send_headers(stream_id, headers, end_stream=True)
 			await self.sock.sendall(self.connection.data_to_send())
 
 		else:
+			# todo: change this to logger in the future.
 			print('HTTP.send ', headers)
 
 			self.connection.send_headers(stream_id, headers, end_stream=False)
-			# print('HTTP.send headers')
+
 			await self.sock.sendall(self.connection.data_to_send())
-			# print('HTTP.send before body')
+
 			# body
 			i = 0
 			while True:
-				# print('HTTP.send in loop')
+
 				while not self.connection.local_flow_control_window(stream_id):
 					await self.wait_for_flow_control(stream_id)
-				# print('HTTP.send 1')
+
 				chunk_size = min(self.connection.local_flow_control_window(stream_id), READ_CHUNK_SIZE)
-				# print('HTTP.send 2')
-				# this line is sync
+
 				data_to_send = data[i:i+chunk_size]
 				end_stream = (len(data_to_send) != chunk_size)
-				# print('HTTP.send 3')
-				# print(stream_id, len(data_to_send), end_stream)
+
 				try:
 					self.connection.send_data(stream_id, data_to_send, end_stream=end_stream)
 				except BaseException as e:
 					print(e)
-				# print(i, len(data_to_send), chunk_size)
-				# print(data_to_send)
-				# print(self.connection.data_to_send())
+
 				await self.sock.sendall(self.connection.data_to_send())
 
 				if end_stream:
@@ -239,7 +237,15 @@ class Response(AbstractResponse):
 		# 不知道这个 context manager 是否处理文件没找到
 		async with aopen(file_path, mode='rb') as f:
 			data = await f.read()
+
 			self.headers['content-length'] = str(len(data))
+
+			content_type, content_encoding = mimetypes.guess_type(file_path)
+			if content_type:
+				self.headers['content-type'] = content_type
+			if content_encoding:
+				self.headers['content-encoding'] = content_encoding
+
 			await self.send(data)
 
 	async def send_status_code(self, status_code):

@@ -1,3 +1,5 @@
+console.log('!!!!!!!!!!!!!!!!! import service.js');
+
 const Service = (function() {
     return {
         post_record: function post_record(record) {
@@ -28,3 +30,5 @@ const Service = (function() {
         }
     };
 })();
+
+export default Service;

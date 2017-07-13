@@ -54,17 +54,3 @@ body {
 
 
 }
-
-@media screen and (max-width: 1081px) {
-	#app_menu {
-		width: 70%;
-	}
-
-	#app_menu button {
-		left: 100%;
-	}
-
-	.app_menu-hidden {
-		left: -71%;
-	}
-}

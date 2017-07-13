@@ -1,3 +1,5 @@
+import Service from './service.js';
+
 const Game = (function() {
 
     //used as a static factory
@@ -358,3 +360,5 @@ const Game = (function() {
 
     return Game;
 })();
+
+export default Game;

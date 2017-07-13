@@ -21,3 +21,5 @@ const User = (function() {
 		name: undefined
 	}
 })();
+
+export default User

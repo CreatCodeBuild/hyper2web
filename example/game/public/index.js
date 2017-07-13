@@ -1,3 +1,8 @@
+import Service from './service.js';  // in Chrome Canary, has to be "./xxxxx.js" explicit relative path
+import User from './user.js';
+import Game from './game.js';
+
+
 let game_ui = new Vue({
 	el: '#game_ui',
 	data: {}
@@ -40,7 +45,7 @@ function detectmob() {
 	return navigator.userAgent.match(/Android/i);
 }
 
-console.log(detectmob());
+console.log('detect mob', detectmob());
 
 
 $("#app_menu button").click(function() {

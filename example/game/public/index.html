@@ -10,7 +10,7 @@
 
     <!--Google API-->
     <meta name="google-signin-client_id" content="130764993669-orvo4sh7hkifkit0kp1rt7c8101msjcm.apps.googleusercontent.com">
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://apis.google.com/js/platform.js"></script>
 
     <!--jQuery-->
     <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
@@ -25,17 +25,6 @@
     <script src="index.js" type="module"></script>
 </head>
 <body>
-    <div id="app_menu" class="app_menu-normal">
-		<button>Button</button>
-        <div class="g-signin2" data-onsuccess="User.onSignIn"></div>
-        <a href="#" onclick="User.signOut();">Sign out</a>
-
-        <div id="app_about">
-            This application is served by
-            <a target="_blank" href="https://github.com/CreatCodeBuild/hyper2web">Hyper2Web</a>
-            , an enjoyable Python web framework written by me.
-        </div>
-    </div>
 
 	<canvas id='game_canvas' width='800' height='600'></canvas>
 
@@ -57,6 +46,10 @@
         <p>Before start the game, please pickup a nickname</p>
         <input v-model="user_input" type="text" name="Your Name" placeholder="Your Name">
         <button v-on:click="confirm">Confirm</button>
+    </div>
+
+    <div id="example">
+      <app-menu></app-menu>
     </div>
 
 </body>

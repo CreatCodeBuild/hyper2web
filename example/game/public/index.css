@@ -2,14 +2,6 @@ body {
 	text-align: center;
 }
 
-#about_this_app {
-	/* itself */
-	position: fixed;
-	bottom: 0;
-	width: 100%;
-	/* content */
-	text-align: center;
-}
 
 #game_canvas {
 	border:solid 1px black;
@@ -32,6 +24,33 @@ body {
 	text-align: center;
 }
 
-h3 {
-	margin: 10px;
+
+
+@media screen and (max-width: 1081px) {
+	#game_canvas {
+		width: 100%;
+	}
+
+	#ask_user_name {
+		/* itself */
+		position: fixed;
+		width: 50%;
+		height: 25%;
+		top: 20%;
+		left: 50%;
+		margin-top: -10%;
+		margin-left: -25%;
+		/* content */
+		text-align: center;
+	}
+
+	#game_rank {
+		visibility: hidden;
+	}
+
+	#game_ui {
+		visibility: hidden;
+	}
+
+
 }

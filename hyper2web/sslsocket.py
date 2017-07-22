@@ -1,6 +1,6 @@
 import os
 
-from curio import socket, ssl
+from curio import socket, ssl, Kernel
 
 
 def create_listening_ssl_socket(address, certfile, keyfile):
@@ -19,10 +19,14 @@ def create_listening_ssl_socket(address, certfile, keyfile):
 
         sock = socket.socket()
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        sock = ssl_context.wrap_socket(sock)
-        sock.bind(address)
-        sock.listen()
-
-        return sock
+        csock = ssl_context.wrap_socket(sock)
+        while True:
+            try:
+                csock.send(None)
+            except StopIteration as e:
+                sock = e.value
+                sock.bind(address)
+                sock.listen()
+                return sock
     else:
         raise FileNotFoundError(certfile + " and/or " + keyfile + " don't exist. HTTP/2 needs certificate files.")

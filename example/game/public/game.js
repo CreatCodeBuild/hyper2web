@@ -1,6 +1,4 @@
-import Service from './service.js';
-
-const Game = (function() {
+function GameFactory(Service) {
 
     //used as a static factory
     let MagicalPoint = {
@@ -359,6 +357,6 @@ const Game = (function() {
     };
 
     return Game;
-})();
+}
 
-export default Game;
+export default GameFactory;

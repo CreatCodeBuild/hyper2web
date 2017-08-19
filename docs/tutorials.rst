@@ -61,6 +61,12 @@ Chapter 2: Static File Server
 =============================
 Although you might want your App to be as dynamic as possible, you have to first understand how a static website is served.
 
+The convention is to have a :code:`public` directory under your project directory and have all your static files there.
+
+For example, if the client does :code:`GET /some_file.format`, the framework will try to read the path :code:`public/some_file.format` and sent what it read to the client. If the path does not exist, then the framework simply reports resource not found.
+
+Therefore, you can easily just put all your frontend code under the public directory and start serving your application.
+
 Chapter 3: REST
 ===============
 Web is built on HTTP and HTTP is all about semantics. While there are thousands of ways to build HTTP API, the one which our framework embraces is REST. Since our audience's experience varies, I do not want to confuse you by explaining too much about REST. The only thing you need to know is that HTTP requests are all about semantics and a REST API is a semantic API.
@@ -73,13 +79,22 @@ First, let's see the frontend code:
 
     fetch('/top10', {method: 'GET'});
 
-:code:`fetch()` is the new browser API which does async HTTP requests. It is better than :code:`XMLHttpRequest` in almost every aspects. It has a cleaner interface which super fits REST.
+:code:`fetch()` is the new browser API which does async HTTP requests. It is better than :code:`XMLHttpRequest` in almost every aspects. It has a cleaner interface which fits RESTful API design.
 
 This line creates a HTTP GET request with :code:`:path` = :code:`/top10`. How to respond to this request is 100% up to the server. Now, in :code:`app.py`, write this piece of code:
 
 .. code-block:: Python
 
-    To be continued...
+    # define API's callback function
+    async def top10_api(request, response):
+        await response.send("some data")
+    
+    # register this function
+    app.get("top10", top10_api)
+    # you can also do
+    # app.get("/top10", top10_api)
+
+Now, whenever the client does such a request, :code:`top10_api` will be run by the framework. We call this function the endpoint of a REST API. You can define the function as whatever you need, but have to include the :code:`async` and :code:`await` key words.
 
 Chapter 4: Parameterized REST
 =============================

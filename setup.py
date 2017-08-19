@@ -3,8 +3,6 @@
 
 from setuptools import setup
 
-from hyper2web import __version__
-
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
@@ -23,7 +21,7 @@ test_requirements = [
 
 setup(
     name='hyper2web',
-    version=__version__,
+    version='0.0.3',
     description="Coroutine based H2 Web backend framework built for the future.",
     long_description=readme + '\n\n' + history,
     author="Xuanzhe Wang",

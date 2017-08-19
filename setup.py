@@ -3,7 +3,7 @@
 
 from setuptools import setup
 
-from hyper2web import __version__
+from hyper2web._info_ import __version__
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()

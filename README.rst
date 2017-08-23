@@ -10,6 +10,8 @@ To install Hyper2Web, run this command in your terminal:
 
 .. code-block:: console
 
+    $ # due to a known issue, please install Curio manually
+    $ pip install git+https://github.com/dabeaz/curio.git
     $ pip install hyper2web
 
 This is the preferred method to install Hyper2Web, as it will always install the most recent stable release.

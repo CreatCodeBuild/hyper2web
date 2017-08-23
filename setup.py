@@ -38,7 +38,6 @@ setup(
     },
     include_package_data=True,
     install_requires=requirements,
-    dependency_links=[git+https://github.com/dabeaz/curio.git]
     zip_safe=False,
     keywords='hyper2web',
     classifiers=[

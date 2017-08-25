@@ -96,8 +96,8 @@ class HTTP(AbstractHTTP):
 	async def handle_event(self, event: events.Event):
 
 		if isinstance(event, events.RequestReceived):
-			await spawn(self.request_received(event))
-
+			task = await spawn(self.request_received(event))
+			await task.join()
 		elif isinstance(event, events.DataReceived):
 			await spawn(self.data_received(event))
 

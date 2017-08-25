@@ -4,11 +4,14 @@ A fully-functional HTTP/2 server written for curio.
 Requires Python 3.5+.
 """
 
+import traceback
+
 from curio import spawn
 
 import h2.config
 import h2.connection
 import h2.events
+from h2.exceptions import ProtocolError
 
 # hyper2web imports
 from . import sslsocket, abstract, http
@@ -56,10 +59,21 @@ class H2Server:
             # 65535 is basically arbitrary here: this amounts to "give me
             # whatever data you have".
             data = await self.sock.recv(65535)
+
             if not data:
                 break
 
-            events = self.conn.receive_data(data)
+            try:
+                events = self.conn.receive_data(data)
+            except ProtocolError as e:
+                # todo: add this to logger
+                traceback.print_exception(etype=e, value=e, tb=e.__traceback__)
+                continue
+            except Exception as e:
+                traceback.print_exception(etype=e, value=e, tb=e.__traceback__)
+                print("Does not expect other exceptions. Exit.")
+                exit()
+
             for event in events:
                 await self.http.handle_event(event)
 

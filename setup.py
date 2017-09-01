@@ -21,7 +21,7 @@ test_requirements = [
 
 setup(
     name='hyper2web',
-    version='0.0.4',
+    version='0.0.6',
     description="Coroutine based H2 Web backend framework built for the future.",
     long_description=readme + '\n\n' + history,
     author="Xuanzhe Wang",
